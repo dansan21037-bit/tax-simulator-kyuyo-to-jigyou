@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>税金・社会保険シミュレーション（給与+事業所得）</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+/* ============================================
+   CSS Variables & Reset
+   ============================================ */
+:root {
+  --primary: #2563eb;
+  --primary-light: #dbeafe;
+  --accent: #059669;
+  --accent-light: #d1fae5;
+  --danger: #dc2626;
+  --danger-light: #fee2e2;
+  --warning: #d97706;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
+  background: var(--gray-50);
+  color: var(--gray-800);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+input[type="number"], select {
+  font-size: 16px;
+  padding: 8px 12px;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius);
+  width: 100%;
+  background: #fff;
+  transition: border-color 0.2s;
+}
+input[type="number"]:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gray-600);
+  margin-bottom: 4px;
+}
+button {
+  cursor: pointer;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: var(--radius);
+  padding: 8px 16px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+/* ============================================
+   Header
+   ============================================ */
+.header {
+  background: var(--primary);
+  color: #fff;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.header h1 {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.view-toggle {
+  display: flex;
+  background: rgba(255,255,255,0.2);
+  border-radius: 20px;
+  overflow: hidden;
+}
+.view-toggle button {
+  background: transparent;
+  color: rgba(255,255,255,0.8);
+  padding: 5px 12px;
+  font-size: 0.75rem;
+  border-radius: 20px;
+}
+.view-toggle button.active {
+  background: #fff;
+  color: var(--primary);
+}
+.tax-year-badge {
+  background: rgba(255,255,255,0.2);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+}
+
+/* ============================================
+   Tab Navigation
+   ============================================ */
+.tab-nav {
+  display: flex;
+  background: #fff;
+  border-bottom: 2px solid var(--gray-200);
+  padding: 0 20px;
+}
+.tab-btn {
+  background: none;
+  color: var(--gray-500);
+  padding: 12px 24px;
+  font-size: 0.95rem;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  border-radius: 0;
+}
+.tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ============================================
+   Simulation Tab — Layout
+   ============================================ */
+.sim-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.sim-input-panel, .sim-result-panel {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+/* ============================================
+   Form Groups
+   ============================================ */
+.form-section {
+  margin-bottom: 20px;
+}
+.form-section-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--primary-light);
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.form-group { margin-bottom: 12px; }
+.form-group.full-width { grid-column: 1 / -1; }
+.input-suffix {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.input-suffix input { flex: 1; }
+.input-suffix span {
+  font-size: 0.85rem;
+  color: var(--gray-500);
+  white-space: nowrap;
+}
+.radio-group {
+  display: flex;
+  gap: 16px;
+  padding-top: 4px;
+}
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: normal;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* ============================================
+   Result Cards
+   ============================================ */
+.result-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.result-card {
+  padding: 16px;
+  border-radius: var(--radius);
+  text-align: center;
+}
+.result-card.take-home {
+  background: var(--accent-light);
+  border: 2px solid var(--accent);
+  grid-column: 1 / -1;
+}
+.result-card.tax { background: var(--danger-light); }
+.result-card.insurance { background: var(--primary-light); }
+.result-card .card-label {
+  font-size: 0.8rem;
+  color: var(--gray-600);
+  margin-bottom: 4px;
+}
+.result-card .card-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.result-card.take-home .card-value { color: var(--accent); }
+.result-card.tax .card-value { color: var(--danger); }
+.result-card.insurance .card-value { color: var(--primary); }
+.result-card .card-monthly {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  margin-top: 2px;
+}
+
+/* ============================================
+   Detail Table
+   ============================================ */
+.detail-section { margin-top: 20px; }
+.detail-toggle {
+  background: var(--gray-100);
+  color: var(--gray-700);
+  width: 100%;
+  text-align: left;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.detail-toggle::after {
+  content: "▼";
+  font-size: 0.7rem;
+  transition: transform 0.2s;
+}
+.detail-toggle.open::after { transform: rotate(180deg); }
+.detail-body {
+  display: none;
+  padding: 12px 0;
+}
+.detail-body.open { display: block; }
+.detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.detail-table th, .detail-table td {
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--gray-100);
+}
+.detail-table th {
+  color: var(--gray-500);
+  font-weight: 600;
+  width: 55%;
+}
+.detail-table td {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.detail-table tr.subtotal td {
+  font-weight: 700;
+  border-top: 2px solid var(--gray-300);
+}
+.detail-table tr.section-header td {
+  font-weight: 700;
+  color: var(--primary);
+  padding-top: 12px;
+  border-bottom: none;
+}
+
+/* ============================================
+   Chart
+   ============================================ */
+.chart-container {
+  max-width: 300px;
+  margin: 20px auto;
+}
+
+/* ============================================
+   Compare Tab
+   ============================================ */
+.compare-layout {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.compare-diff-summary {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.diff-main {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 8px 0;
+}
+.diff-main.positive { color: var(--accent); }
+.diff-main.negative { color: var(--danger); }
+.diff-label {
+  font-size: 0.85rem;
+  color: var(--gray-500);
+}
+.diff-details {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 12px;
+  font-size: 0.85rem;
+}
+.diff-item span { font-weight: 600; }
+.compare-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.compare-panel {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+.compare-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.compare-panel-title {
+  font-size: 1rem;
+  font-weight: 700;
+}
+.pattern-a .compare-panel-title { color: var(--primary); }
+.pattern-b .compare-panel-title { color: var(--accent); }
+.copy-btn {
+  background: var(--gray-100);
+  color: var(--gray-600);
+  font-size: 0.75rem;
+  padding: 4px 10px;
+}
+.copy-btn:hover { background: var(--gray-200); }
+.compare-chart-container {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  margin-top: 20px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ============================================
+   Responsive — Mobile (default auto)
+   ============================================ */
+@media (max-width: 768px) {
+  body:not(.force-pc) .sim-layout {
+    grid-template-columns: 1fr;
+  }
+  body:not(.force-pc) .compare-panels {
+    grid-template-columns: 1fr;
+  }
+  body:not(.force-pc) .form-grid {
+    grid-template-columns: 1fr;
+  }
+  body:not(.force-pc) .result-summary {
+    grid-template-columns: 1fr;
+  }
+  body:not(.force-pc) .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  body:not(.force-pc) .diff-details {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* Force Mobile */
+body.force-mobile .sim-layout {
+  grid-template-columns: 1fr;
+}
+body.force-mobile .compare-panels {
+  grid-template-columns: 1fr;
+}
+body.force-mobile .form-grid {
+  grid-template-columns: 1fr;
+}
+body.force-mobile .result-summary {
+  grid-template-columns: 1fr;
+}
+body.force-mobile .header {
+  flex-direction: column;
+  align-items: flex-start;
+}
+body.force-mobile .diff-details {
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Force PC */
+body.force-pc .sim-layout {
+  grid-template-columns: 1fr 1fr;
+}
+body.force-pc .compare-panels {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* ============================================
+   Disclaimer
+   ============================================ */
+.disclaimer {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin: 20px;
+  font-size: 0.8rem;
+  color: var(--warning);
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ============================================
+   Footer
+   ============================================ */
+.footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.75rem;
+  color: var(--gray-400);
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     Header
+     ============================================ -->
+<header class="header">
+  <h1>税金・社会保険シミュレーション</h1>
+  <div class="header-right">
+    <span class="tax-year-badge">令和7年(2025)対応</span>
+    <div class="view-toggle">
+      <button id="viewAuto" class="active" onclick="setView('auto')">自動</button>
+      <button id="viewPC" onclick="setView('pc')">PC版</button>
+      <button id="viewMobile" onclick="setView('mobile')">スマホ版</button>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================
+     Tab Navigation
+     ============================================ -->
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="sim">シミュレーション</button>
+  <button class="tab-btn" data-tab="compare">比較</button>
+</nav>
+
+<!-- ============================================
+     Simulation Tab
+     ============================================ -->
+<div id="tab-sim" class="tab-content active">
+  <div class="sim-layout">
+    <!-- Input Panel -->
+    <div class="sim-input-panel">
+      <div class="form-section">
+        <div class="form-section-title">収入</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="salaryIncome">給与収入（年収）</label>
+            <div class="input-suffix">
+              <input type="number" id="salaryIncome" value="5000000" min="0" step="10000">
+              <span>円</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="bizRevenue">事業売上</label>
+            <div class="input-suffix">
+              <input type="number" id="bizRevenue" value="2000000" min="0" step="10000">
+              <span>円</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="bizExpense">事業経費</label>
+            <div class="input-suffix">
+              <input type="number" id="bizExpense" value="500000" min="0" step="10000">
+              <span>円</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="blueDeduction">青色申告特別控除</label>
+            <select id="blueDeduction">
+              <option value="0">なし（白色申告）</option>
+              <option value="100000">10万円</option>
+              <option value="550000">55万円</option>
+              <option value="650000" selected>65万円</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">社会保険・属性</div>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>社会保険の加入区分</label>
+            <div class="radio-group">
+              <label><input type="radio" name="insuranceType" value="shakai" checked> 会社の社保</label>
+              <label><input type="radio" name="insuranceType" value="kokuho"> 国保+国民年金</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="age">年齢</label>
+            <select id="age">
+              <option value="under40" selected>40歳未満</option>
+              <option value="40to64">40〜64歳</option>
+              <option value="65over">65歳以上</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="dependents">扶養人数</label>
+            <select id="dependents">
+              <option value="0" selected>0人</option>
+              <option value="1">1人</option>
+              <option value="2">2人</option>
+              <option value="3">3人</option>
+              <option value="4">4人</option>
+              <option value="5">5人</option>
+            </select>
+          </div>
+          <div class="form-group full-width">
+            <label>配偶者控除</label>
+            <div class="radio-group">
+              <label><input type="radio" name="spouse" value="none" checked> なし</label>
+              <label><input type="radio" name="spouse" value="general"> 配偶者控除（38万）</label>
+              <label><input type="radio" name="spouse" value="special"> 配偶者特別控除</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">その他所得控除</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="ideco">iDeCo掛金</label>
+            <div class="input-suffix">
+              <input type="number" id="ideco" value="0" min="0" step="1000">
+              <span>円/年</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="lifeInsurance">生命保険料控除</label>
+            <div class="input-suffix">
+              <input type="number" id="lifeInsurance" value="0" min="0" max="120000" step="1000">
+              <span>円</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="furusato">ふるさと納税</label>
+            <div class="input-suffix">
+              <input type="number" id="furusato" value="0" min="0" step="1000">
+              <span>円</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="otherDeduction">その他控除</label>
+            <div class="input-suffix">
+              <input type="number" id="otherDeduction" value="0" min="0" step="1000">
+              <span>円</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result Panel -->
+    <div class="sim-result-panel">
+      <div class="result-summary">
+        <div class="result-card take-home">
+          <div class="card-label">年間手取り額</div>
+          <div class="card-value" id="takeHome">-</div>
+          <div class="card-monthly" id="takeHomeMonthly">月額: -</div>
+        </div>
+        <div class="result-card tax">
+          <div class="card-label">税金合計</div>
+          <div class="card-value" id="totalTax">-</div>
+          <div class="card-monthly" id="totalTaxMonthly">月額: -</div>
+        </div>
+        <div class="result-card insurance">
+          <div class="card-label">社会保険料合計</div>
+          <div class="card-value" id="totalInsurance">-</div>
+          <div class="card-monthly" id="totalInsuranceMonthly">月額: -</div>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="mainChart"></canvas>
+      </div>
+
+      <div class="detail-section">
+        <button class="detail-toggle" onclick="toggleDetail('mainDetail')">計算の詳細を表示</button>
+        <div id="mainDetail" class="detail-body">
+          <table class="detail-table" id="detailTable">
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     Compare Tab
+     ============================================ -->
+<div id="tab-compare" class="tab-content">
+  <div class="compare-layout">
+    <!-- Diff Summary -->
+    <div class="compare-diff-summary">
+      <div class="diff-label">年間手取り差額（B - A）</div>
+      <div class="diff-main" id="diffTakeHome">0円</div>
+      <div class="diff-details">
+        <div class="diff-item">所得税差: <span id="diffIncomeTax">0円</span></div>
+        <div class="diff-item">住民税差: <span id="diffResidentTax">0円</span></div>
+        <div class="diff-item">社保差: <span id="diffInsurance">0円</span></div>
+      </div>
+    </div>
+
+    <!-- Two Panels -->
+    <div class="compare-panels">
+      <!-- Pattern A -->
+      <div class="compare-panel pattern-a">
+        <div class="compare-panel-header">
+          <div class="compare-panel-title">パターンA（現状）</div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">収入</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>給与収入</label>
+              <div class="input-suffix">
+                <input type="number" data-cmp="a" data-field="salary" value="5000000" min="0" step="10000">
+                <span>円</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>事業売上</label>
+              <div class="input-suffix">
+                <input type="number" data-cmp="a" data-field="bizRevenue" value="2000000" min="0" step="10000">
+                <span>円</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>事業経費</label>
+              <div class="input-suffix">
+                <input type="number" data-cmp="a" data-field="bizExpense" value="500000" min="0" step="10000">
+                <span>円</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>青色申告特別控除</label>
+              <select data-cmp="a" data-field="blue">
+                <option value="0">なし</option>
+                <option value="100000">10万円</option>
+                <option value="550000">55万円</option>
+                <option value="650000" selected>65万円</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">社会保険・属性</div>
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label>社保区分</label>
+              <div class="radio-group">
+                <label><input type="radio" data-cmp="a" name="cmpInsA" data-field="insType" value="shakai" checked> 社保</label>
+                <label><input type="radio" data-cmp="a" name="cmpInsA" data-field="insType" value="kokuho"> 国保</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>年齢</label>
+              <select data-cmp="a" data-field="age">
+                <option value="under40" selected>40歳未満</option>
+                <option value="40to64">40〜64歳</option>
+                <option value="65over">65歳以上</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>扶養人数</label>
+              <select data-cmp="a" data-field="dependents">
+                <option value="0" selected>0人</option>
+                <option value="1">1人</option><option value="2">2人</option><option value="3">3人</option>
+              </select>
+            </div>
+            <div class="form-group full-width">
+              <label>配偶者控除</label>
+              <div class="radio-group">
+                <label><input type="radio" data-cmp="a" name="cmpSpouseA" data-field="spouse" value="none" checked> なし</label>
+                <label><input type="radio" data-cmp="a" name="cmpSpouseA" data-field="spouse" value="general"> あり(38万)</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">その他控除</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>iDeCo</label>
+              <div class="input-suffix">
+                <input type="number" data-cmp="a" data-field="ideco" value="0" min="0" step="1000"><span>円/年</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>生命保険料控除</label>
+              <div class="input-suffix">
+                <input type="number" data-cmp="a" data-field="lifeIns" value="0" min="0" step="1000"><span>円</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Pattern A Result -->
+        <div class="result-summary" style="margin-top:16px;">
+          <div class="result-card take-home">
+            <div class="card-label">手取り</div>
+            <div class="card-value" id="cmpTakeHomeA">-</div>
+          </div>
+          <div class="result-card tax">
+            <div class="card-label">税金</div>
+            <div class="card-value" id="cmpTaxA">-</div>
+          </div>
+          <div class="result-card insurance">
+            <div class="card-label">社保</div>
+            <div class="card-value" id="cmpInsA">-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pattern B -->
+      <div class="compare-panel pattern-b">
+        <div class="compare-panel-header">
+          <div class="compare-panel-title">パターンB（変更後）</div>
+          <button class="copy-btn" onclick="copyAtoB()">Aからコピー</button>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">収入</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>給与収入</label>
+              <div class="input-suffix">
+                <input type="number" data-cmp="b" data-field="salary" value="5000000" min="0" step="10000">
+                <span>円</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>事業売上</label>
+              <div class="input-suffix">
+                <input type="number" data-cmp="b" data-field="bizRevenue" value="3000000" min="0" step="10000">
+                <span>円</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>事業経費</label>
+              <div class="input-suffix">
+                <input type="number" data-cmp="b" data-field="bizExpense" value="800000" min="0" step="10000">
+                <span>円</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>青色申告特別控除</label>
+              <select data-cmp="b" data-field="blue">
+                <option value="0">なし</option>
+                <option value="100000">10万円</option>
+                <option value="550000">55万円</option>
+                <option value="650000" selected>65万円</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">社会保険・属性</div>
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label>社保区分</label>
+              <div class="radio-group">
+                <label><input type="radio" data-cmp="b" name="cmpInsB" data-field="insType" value="shakai" checked> 社保</label>
+                <label><input type="radio" data-cmp="b" name="cmpInsB" data-field="insType" value="kokuho"> 国保</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>年齢</label>
+              <select data-cmp="b" data-field="age">
+                <option value="under40" selected>40歳未満</option>
+                <option value="40to64">40〜64歳</option>
+                <option value="65over">65歳以上</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>扶養人数</label>
+              <select data-cmp="b" data-field="dependents">
+                <option value="0" selected>0人</option>
+                <option value="1">1人</option><option value="2">2人</option><option value="3">3人</option>
+              </select>
+            </div>
+            <div class="form-group full-width">
+              <label>配偶者控除</label>
+              <div class="radio-group">
+                <label><input type="radio" data-cmp="b" name="cmpSpouseB" data-field="spouse" value="none" checked> なし</label>
+                <label><input type="radio" data-cmp="b" name="cmpSpouseB" data-field="spouse" value="general"> あり(38万)</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">その他控除</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>iDeCo</label>
+              <div class="input-suffix">
+                <input type="number" data-cmp="b" data-field="ideco" value="0" min="0" step="1000"><span>円/年</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>生命保険料控除</label>
+              <div class="input-suffix">
+                <input type="number" data-cmp="b" data-field="lifeIns" value="0" min="0" step="1000"><span>円</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Pattern B Result -->
+        <div class="result-summary" style="margin-top:16px;">
+          <div class="result-card take-home">
+            <div class="card-label">手取り</div>
+            <div class="card-value" id="cmpTakeHomeB">-</div>
+          </div>
+          <div class="result-card tax">
+            <div class="card-label">税金</div>
+            <div class="card-value" id="cmpTaxB">-</div>
+          </div>
+          <div class="result-card insurance">
+            <div class="card-label">社保</div>
+            <div class="card-value" id="cmpInsB">-</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compare Chart -->
+    <div class="compare-chart-container">
+      <canvas id="compareChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Disclaimer -->
+<div class="disclaimer">
+  ※ 本シミュレーションは概算です。実際の税額・保険料とは異なる場合があります。国民健康保険料は東京23区の標準的な料率で計算しています。健康保険料は協会けんぽ（東京都）の料率を使用しています。正確な金額は税務署・自治体にご確認ください。
+</div>
+
+<footer class="footer">
+  税金・社会保険シミュレーション v1.0 | 令和7年(2025年)税制対応
+</footer>
+
+<script>
+/* ============================================
+   Tax Calculation Engine — 令和7年(2025)
+   ============================================ */
+
+// 給与所得控除（令和7年改正: 最低保障55万→65万に引上げ）
+function calcSalaryDeduction(income) {
+  if (income <= 0) return 0;
+  if (income <= 1_900_000) return 650_000;  // 65万（190万以下は最低保障）
+  if (income <= 3_600_000) return income * 0.3 + 80_000;
+  if (income <= 6_600_000) return income * 0.2 + 440_000;
+  if (income <= 8_500_000) return income * 0.1 + 1_100_000;
+  return 1_950_000;
+}
+
+// 基礎控除（所得税）— 令和7〜8年暫定
+function calcBasicDeductionIncomeTax(totalIncome) {
+  if (totalIncome <= 1_320_000) return 950_000;
+  if (totalIncome <= 3_360_000) return 880_000;
+  if (totalIncome <= 4_890_000) return 680_000;
+  if (totalIncome <= 6_550_000) return 630_000;
+  if (totalIncome <= 23_500_000) return 580_000;
+  if (totalIncome <= 24_000_000) return 480_000;
+  if (totalIncome <= 24_500_000) return 320_000;
+  if (totalIncome <= 25_000_000) return 160_000;
+  return 0;
+}
+
+// 基礎控除（住民税）— 変更なし
+function calcBasicDeductionResidentTax(totalIncome) {
+  if (totalIncome <= 24_000_000) return 430_000;
+  if (totalIncome <= 24_500_000) return 290_000;
+  if (totalIncome <= 25_000_000) return 150_000;
+  return 0;
+}
+
+// 所得税額
+function calcIncomeTax(taxableIncome) {
+  if (taxableIncome <= 0) return 0;
+  const brackets = [
+    [1_950_000, 0.05, 0],
+    [3_300_000, 0.10, 97_500],
+    [6_950_000, 0.20, 427_500],
+    [9_000_000, 0.23, 636_000],
+    [18_000_000, 0.33, 1_536_000],
+    [40_000_000, 0.40, 2_796_000],
+    [Infinity, 0.45, 4_796_000],
+  ];
+  for (const [limit, rate, deduction] of brackets) {
+    if (taxableIncome <= limit) {
+      return Math.floor(taxableIncome * rate - deduction);
+    }
+  }
+  return 0;
+}
+
+// 住民税（所得割 + 均等割）※ふるさと納税の税額控除は別途適用
+function calcResidentTax(taxableIncome, furusatoCredit) {
+  if (taxableIncome <= 0) return { total: 0, incomeRate: 0, perCapita: 0, furusatoCredit: 0 };
+  const incomeRate = Math.floor(taxableIncome * 0.10);
+  const perCapita = 5_000;
+  // ふるさと納税の住民税税額控除を適用（上限: 所得割の20%）
+  const actualCredit = Math.min(furusatoCredit, Math.floor(incomeRate * 0.20));
+  const adjustedIncomeRate = Math.max(incomeRate - actualCredit, 0);
+  return { total: adjustedIncomeRate + perCapita, incomeRate: adjustedIncomeRate, perCapita, furusatoCredit: actualCredit };
+}
+
+// 所得税の限界税率を取得
+function getMarginalTaxRate(taxableIncome) {
+  if (taxableIncome <= 0) return 0;
+  if (taxableIncome <= 1_950_000) return 0.05;
+  if (taxableIncome <= 3_300_000) return 0.10;
+  if (taxableIncome <= 6_950_000) return 0.20;
+  if (taxableIncome <= 9_000_000) return 0.23;
+  if (taxableIncome <= 18_000_000) return 0.33;
+  if (taxableIncome <= 40_000_000) return 0.40;
+  return 0.45;
+}
+
+// ふるさと納税の住民税税額控除を計算（基本分 + 特例分）
+function calcFurusatoResidentTaxCredit(furusato, marginalTaxRate) {
+  if (furusato <= 2_000) return 0;
+  const base = furusato - 2_000;
+  // 基本分: (寄附金額 - 2,000) × 10%
+  const basicCredit = Math.floor(base * 0.10);
+  // 特例分: (寄附金額 - 2,000) × (100% - 10% - 所得税率 × 1.021)
+  const specialRate = Math.max(1 - 0.10 - marginalTaxRate * 1.021, 0);
+  const specialCredit = Math.floor(base * specialRate);
+  return basicCredit + specialCredit;
+}
+
+// 社会保険料（会社の社保）— 給与ベース
+function calcShakaiHoken(salaryIncome, age) {
+  // 標準報酬月額の概算（給与収入÷12、上限65万）
+  const monthly = Math.min(salaryIncome / 12, 650_000);
+  // 厚生年金 9.15%（本人負担）
+  const pension = Math.floor(monthly * 0.0915) * 12;
+  // 健康保険 約4.985%（協会けんぽ東京都 令和7年度 9.97%の半分）
+  const health = Math.floor(monthly * 0.04985) * 12;
+  // 介護保険 0.795%（40歳以上）
+  const nursing = (age === '40to64') ? Math.floor(monthly * 0.00795) * 12 : 0;
+  // 雇用保険 0.55%
+  const employment = Math.floor(salaryIncome * 0.0055);
+  return {
+    pension,
+    health,
+    nursing,
+    employment,
+    total: pension + health + nursing + employment,
+    type: '社会保険'
+  };
+}
+
+// 国民健康保険 + 国民年金 — 所得ベース
+function calcKokuho(totalIncome, age) {
+  // 賦課基準額 = 総所得 - 基礎控除43万
+  const base = Math.max(totalIncome - 430_000, 0);
+  // 医療分
+  const medIncome = Math.floor(base * 0.0771);
+  const medFlat = 47_300;
+  const medTotal = Math.min(medIncome + medFlat, 680_000); // 上限68万
+  // 支援分
+  const supIncome = Math.floor(base * 0.0269);
+  const supFlat = 16_800;
+  const supTotal = Math.min(supIncome + supFlat, 260_000); // 上限26万
+  // 介護分（40〜64歳）
+  let nurTotal = 0;
+  if (age === '40to64') {
+    const nurIncome = Math.floor(base * 0.0225);
+    const nurFlat = 17_000;
+    nurTotal = Math.min(nurIncome + nurFlat, 170_000); // 上限17万
+  }
+  const kokuhoTotal = medTotal + supTotal + nurTotal;
+  // 国民年金
+  const nenkin = 17_510 * 12; // 210,120円/年
+  return {
+    kokuho: kokuhoTotal,
+    kokuhoMed: medTotal,
+    kokuhoSup: supTotal,
+    kokuhoNur: nurTotal,
+    nenkin,
+    total: kokuhoTotal + nenkin,
+    type: '国保+国民年金'
+  };
+}
+
+// 全体計算
+function calcAll(params) {
+  const {
+    salaryIncome, bizRevenue, bizExpense, blueDeduction,
+    insuranceType, age, dependents, spouse,
+    ideco, lifeInsurance, furusato, otherDeduction
+  } = params;
+
+  // 1) 給与所得
+  const salaryDeduction = calcSalaryDeduction(salaryIncome);
+  const salaryEarnings = Math.max(salaryIncome - salaryDeduction, 0);
+
+  // 2) 事業所得
+  const bizProfit = Math.max(bizRevenue - bizExpense, 0);
+  const bizEarnings = Math.max(bizProfit - blueDeduction, 0);
+
+  // 3) 合計所得
+  const totalIncome = salaryEarnings + bizEarnings;
+
+  // 4) 社会保険料
+  let insurance;
+  if (insuranceType === 'shakai') {
+    insurance = calcShakaiHoken(salaryIncome, age);
+  } else {
+    insurance = calcKokuho(totalIncome, age);
+  }
+
+  // 5) 所得控除
+  const basicDeductionIT = calcBasicDeductionIncomeTax(totalIncome);
+  const basicDeductionRT = calcBasicDeductionResidentTax(totalIncome);
+  const dependentDeduction = dependents * 380_000;
+  const spouseDeduction = spouse === 'general' ? 380_000 : 0;
+  const socialInsDeduction = insurance.total;
+  // ふるさと納税: 所得税は寄附金控除（所得控除）、住民税は税額控除（別途計算）
+  const furusatoDeductionIT = Math.max(furusato - 2_000, 0);
+
+  const totalDeductionIT = basicDeductionIT + dependentDeduction + spouseDeduction
+    + socialInsDeduction + ideco + lifeInsurance + furusatoDeductionIT + otherDeduction;
+  // 住民税の所得控除にはふるさと納税を含めない（税額控除で処理）
+  const totalDeductionRT = basicDeductionRT + dependentDeduction + spouseDeduction
+    + socialInsDeduction + ideco + lifeInsurance + otherDeduction;
+
+  // 6) 課税所得
+  const taxableIncomeIT = Math.max(totalIncome - totalDeductionIT, 0);
+  const taxableIncomeRT = Math.max(totalIncome - totalDeductionRT, 0);
+
+  // 7) 所得税
+  const incomeTaxBase = calcIncomeTax(taxableIncomeIT);
+  const reconstructionTax = Math.floor(incomeTaxBase * 0.021);
+  const incomeTaxTotal = incomeTaxBase + reconstructionTax;
+
+  // 8) 住民税（ふるさと納税は税額控除として適用）
+  const marginalTaxRate = getMarginalTaxRate(taxableIncomeIT);
+  const furusatoResidentCredit = calcFurusatoResidentTaxCredit(furusato, marginalTaxRate);
+  const residentTax = calcResidentTax(taxableIncomeRT, furusatoResidentCredit);
+
+  // 9) 税金合計
+  const totalTax = incomeTaxTotal + residentTax.total;
+
+  // 10) 手取り
+  const grossIncome = salaryIncome + bizRevenue - bizExpense;
+  const takeHome = grossIncome - totalTax - insurance.total;
+
+  return {
+    salaryIncome, bizRevenue, bizExpense, blueDeduction,
+    salaryDeduction, salaryEarnings,
+    bizProfit, bizEarnings,
+    totalIncome,
+    insurance,
+    basicDeductionIT, basicDeductionRT,
+    dependentDeduction, spouseDeduction, socialInsDeduction,
+    ideco, lifeInsurance, furusatoDeductionIT, furusatoResidentCredit, otherDeduction,
+    totalDeductionIT, totalDeductionRT,
+    taxableIncomeIT, taxableIncomeRT,
+    incomeTaxBase, reconstructionTax, incomeTaxTotal,
+    marginalTaxRate,
+    residentTax,
+    totalTax,
+    grossIncome,
+    takeHome
+  };
+}
+
+/* ============================================
+   Formatting Helpers
+   ============================================ */
+function fmt(n) {
+  return Math.floor(n).toLocaleString('ja-JP') + '円';
+}
+function fmtShort(n) {
+  const abs = Math.abs(n);
+  if (abs >= 100_000_000) return (n / 100_000_000).toFixed(1) + '億円';
+  if (abs >= 10_000) return Math.floor(n / 10_000).toLocaleString('ja-JP') + '万円';
+  return Math.floor(n).toLocaleString('ja-JP') + '円';
+}
+function fmtDiff(n) {
+  const sign = n > 0 ? '+' : '';
+  return sign + fmtShort(n);
+}
+
+/* ============================================
+   Main Simulation Tab
+   ============================================ */
+let mainChart = null;
+
+function getMainInputs() {
+  return {
+    salaryIncome: Number(document.getElementById('salaryIncome').value) || 0,
+    bizRevenue: Number(document.getElementById('bizRevenue').value) || 0,
+    bizExpense: Number(document.getElementById('bizExpense').value) || 0,
+    blueDeduction: Number(document.getElementById('blueDeduction').value) || 0,
+    insuranceType: document.querySelector('input[name="insuranceType"]:checked').value,
+    age: document.getElementById('age').value,
+    dependents: Number(document.getElementById('dependents').value) || 0,
+    spouse: document.querySelector('input[name="spouse"]:checked').value,
+    ideco: Number(document.getElementById('ideco').value) || 0,
+    lifeInsurance: Number(document.getElementById('lifeInsurance').value) || 0,
+    furusato: Number(document.getElementById('furusato').value) || 0,
+    otherDeduction: Number(document.getElementById('otherDeduction').value) || 0,
+  };
+}
+
+function updateMain() {
+  const inputs = getMainInputs();
+  const r = calcAll(inputs);
+
+  // Summary cards
+  document.getElementById('takeHome').textContent = fmtShort(r.takeHome);
+  document.getElementById('takeHomeMonthly').textContent = '月額: ' + fmtShort(r.takeHome / 12);
+  document.getElementById('totalTax').textContent = fmtShort(r.totalTax);
+  document.getElementById('totalTaxMonthly').textContent = '月額: ' + fmtShort(r.totalTax / 12);
+  document.getElementById('totalInsurance').textContent = fmtShort(r.insurance.total);
+  document.getElementById('totalInsuranceMonthly').textContent = '月額: ' + fmtShort(r.insurance.total / 12);
+
+  // Detail table
+  const rows = [
+    ['section', '■ 収入'],
+    ['給与収入', fmt(r.salaryIncome)],
+    ['事業売上', fmt(r.bizRevenue)],
+    ['事業経費', '-' + fmt(r.bizExpense)],
+    ['', ''],
+    ['section', '■ 所得計算'],
+    ['給与所得控除', '-' + fmt(r.salaryDeduction)],
+    ['給与所得', fmt(r.salaryEarnings)],
+    ['事業利益（売上-経費）', fmt(r.bizProfit)],
+    ['青色申告特別控除', '-' + fmt(r.blueDeduction)],
+    ['事業所得', fmt(r.bizEarnings)],
+    ['subtotal', '合計所得', fmt(r.totalIncome)],
+    ['', ''],
+    ['section', '■ 所得控除（所得税）'],
+    ['基礎控除', fmt(r.basicDeductionIT)],
+    ['社会保険料控除', fmt(r.socialInsDeduction)],
+    ['扶養控除', fmt(r.dependentDeduction)],
+    ['配偶者控除', fmt(r.spouseDeduction)],
+    ['iDeCo（小規模企業共済等）', fmt(r.ideco)],
+    ['生命保険料控除', fmt(r.lifeInsurance)],
+    ['ふるさと納税（寄附金控除）', fmt(r.furusatoDeductionIT)],
+    ['その他控除', fmt(r.otherDeduction)],
+    ['subtotal', '所得控除合計（所得税）', fmt(r.totalDeductionIT)],
+    ['', ''],
+    ['section', '■ 税額計算'],
+    ['課税所得（所得税）', fmt(r.taxableIncomeIT)],
+    ['所得税', fmt(r.incomeTaxBase)],
+    ['復興特別所得税（2.1%）', fmt(r.reconstructionTax)],
+    ['subtotal', '所得税合計', fmt(r.incomeTaxTotal)],
+    ['', ''],
+    ['所得控除合計（住民税）', fmt(r.totalDeductionRT)],
+    ['課税所得（住民税）', fmt(r.taxableIncomeRT)],
+    ['住民税（所得割 10%）', fmt(Math.floor(r.taxableIncomeRT * 0.10))],
+    ['ふるさと納税 税額控除', '-' + fmt(r.residentTax.furusatoCredit)],
+    ['住民税（均等割）', fmt(r.residentTax.perCapita)],
+    ['subtotal', '住民税合計', fmt(r.residentTax.total)],
+    ['', ''],
+    ['section', '■ 社会保険料'],
+  ];
+
+  if (r.insurance.type === '社会保険') {
+    rows.push(['健康保険料', fmt(r.insurance.health)]);
+    rows.push(['厚生年金保険料', fmt(r.insurance.pension)]);
+    if (r.insurance.nursing > 0) rows.push(['介護保険料', fmt(r.insurance.nursing)]);
+    rows.push(['雇用保険料', fmt(r.insurance.employment)]);
+  } else {
+    rows.push(['国保（医療分）', fmt(r.insurance.kokuhoMed)]);
+    rows.push(['国保（支援分）', fmt(r.insurance.kokuhoSup)]);
+    if (r.insurance.kokuhoNur > 0) rows.push(['国保（介護分）', fmt(r.insurance.kokuhoNur)]);
+    rows.push(['国民年金', fmt(r.insurance.nenkin)]);
+  }
+  rows.push(['subtotal', '社会保険料合計', fmt(r.insurance.total)]);
+  rows.push(['', '']);
+  rows.push(['section', '■ 最終結果']);
+  rows.push(['総収入（売上-経費）', fmt(r.grossIncome)]);
+  rows.push(['税金合計', '-' + fmt(r.totalTax)]);
+  rows.push(['社会保険料合計', '-' + fmt(r.insurance.total)]);
+  rows.push(['subtotal', '年間手取り', fmt(r.takeHome)]);
+
+  const tbody = document.querySelector('#detailTable tbody');
+  tbody.innerHTML = '';
+  for (const row of rows) {
+    const tr = document.createElement('tr');
+    if (row[0] === 'section') {
+      tr.className = 'section-header';
+      tr.innerHTML = `<td colspan="2">${row[1]}</td>`;
+    } else if (row[0] === 'subtotal') {
+      tr.className = 'subtotal';
+      tr.innerHTML = `<th>${row[1]}</th><td>${row[2]}</td>`;
+    } else if (row[0] === '' && row[1] === '') {
+      tr.innerHTML = '<td colspan="2" style="height:8px"></td>';
+    } else {
+      tr.innerHTML = `<th>${row[0]}</th><td>${row[1]}</td>`;
+    }
+    tbody.appendChild(tr);
+  }
+
+  // Chart
+  const chartData = [
+    Math.max(r.takeHome, 0),
+    r.incomeTaxTotal,
+    r.residentTax.total,
+    r.insurance.total
+  ];
+  if (mainChart) {
+    mainChart.data.datasets[0].data = chartData;
+    mainChart.update();
+  } else {
+    mainChart = new Chart(document.getElementById('mainChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['手取り', '所得税', '住民税', '社会保険料'],
+        datasets: [{
+          data: chartData,
+          backgroundColor: ['#059669', '#dc2626', '#d97706', '#2563eb'],
+          borderWidth: 2,
+          borderColor: '#fff'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'bottom', labels: { font: { size: 12 } } },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                return ctx.label + ': ' + fmtShort(ctx.raw);
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+}
+
+/* ============================================
+   Compare Tab
+   ============================================ */
+let compareChart = null;
+
+function getCmpInputs(side) {
+  const q = (field) => document.querySelector(`[data-cmp="${side}"][data-field="${field}"]`);
+  const radio = (field) => document.querySelector(`[data-cmp="${side}"][data-field="${field}"]:checked`);
+  return {
+    salaryIncome: Number(q('salary')?.value) || 0,
+    bizRevenue: Number(q('bizRevenue')?.value) || 0,
+    bizExpense: Number(q('bizExpense')?.value) || 0,
+    blueDeduction: Number(q('blue')?.value) || 0,
+    insuranceType: radio('insType')?.value || 'shakai',
+    age: q('age')?.value || 'under40',
+    dependents: Number(q('dependents')?.value) || 0,
+    spouse: radio('spouse')?.value || 'none',
+    ideco: Number(q('ideco')?.value) || 0,
+    lifeInsurance: Number(q('lifeIns')?.value) || 0,
+    furusato: 0,
+    otherDeduction: 0,
+  };
+}
+
+function updateCompare() {
+  const a = calcAll(getCmpInputs('a'));
+  const b = calcAll(getCmpInputs('b'));
+
+  document.getElementById('cmpTakeHomeA').textContent = fmtShort(a.takeHome);
+  document.getElementById('cmpTaxA').textContent = fmtShort(a.totalTax);
+  document.getElementById('cmpInsA').textContent = fmtShort(a.insurance.total);
+
+  document.getElementById('cmpTakeHomeB').textContent = fmtShort(b.takeHome);
+  document.getElementById('cmpTaxB').textContent = fmtShort(b.totalTax);
+  document.getElementById('cmpInsB').textContent = fmtShort(b.insurance.total);
+
+  // Diff
+  const diffTH = b.takeHome - a.takeHome;
+  const diffEl = document.getElementById('diffTakeHome');
+  diffEl.textContent = fmtDiff(diffTH);
+  diffEl.className = 'diff-main ' + (diffTH >= 0 ? 'positive' : 'negative');
+
+  document.getElementById('diffIncomeTax').textContent = fmtDiff(b.incomeTaxTotal - a.incomeTaxTotal);
+  document.getElementById('diffResidentTax').textContent = fmtDiff(b.residentTax.total - a.residentTax.total);
+  document.getElementById('diffInsurance').textContent = fmtDiff(b.insurance.total - a.insurance.total);
+
+  // Compare chart
+  const chartData = {
+    labels: ['手取り', '所得税', '住民税', '社保'],
+    datasets: [
+      {
+        label: 'パターンA',
+        data: [a.takeHome, a.incomeTaxTotal, a.residentTax.total, a.insurance.total],
+        backgroundColor: 'rgba(37, 99, 235, 0.7)',
+      },
+      {
+        label: 'パターンB',
+        data: [b.takeHome, b.incomeTaxTotal, b.residentTax.total, b.insurance.total],
+        backgroundColor: 'rgba(5, 150, 105, 0.7)',
+      }
+    ]
+  };
+  if (compareChart) {
+    compareChart.data = chartData;
+    compareChart.update();
+  } else {
+    compareChart = new Chart(document.getElementById('compareChart'), {
+      type: 'bar',
+      data: chartData,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                return ctx.dataset.label + ': ' + fmtShort(ctx.raw);
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(v) { return fmtShort(v); }
+            }
+          }
+        }
+      }
+    });
+  }
+}
+
+function copyAtoB() {
+  const fields = ['salary', 'bizRevenue', 'bizExpense', 'blue', 'age', 'dependents', 'ideco', 'lifeIns'];
+  for (const f of fields) {
+    const aEl = document.querySelector(`[data-cmp="a"][data-field="${f}"]`);
+    const bEl = document.querySelector(`[data-cmp="b"][data-field="${f}"]`);
+    if (aEl && bEl) bEl.value = aEl.value;
+  }
+  // Radio buttons
+  for (const f of ['insType', 'spouse']) {
+    const aChecked = document.querySelector(`[data-cmp="a"][data-field="${f}"]:checked`);
+    if (aChecked) {
+      const bMatch = document.querySelector(`[data-cmp="b"][data-field="${f}"][value="${aChecked.value}"]`);
+      if (bMatch) bMatch.checked = true;
+    }
+  }
+  updateCompare();
+}
+
+/* ============================================
+   Tab Switching
+   ============================================ */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'compare') updateCompare();
+  });
+});
+
+/* ============================================
+   View Toggle (Auto / PC / Mobile)
+   ============================================ */
+function setView(mode) {
+  document.body.classList.remove('force-pc', 'force-mobile');
+  document.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
+  if (mode === 'pc') {
+    document.body.classList.add('force-pc');
+    document.getElementById('viewPC').classList.add('active');
+  } else if (mode === 'mobile') {
+    document.body.classList.add('force-mobile');
+    document.getElementById('viewMobile').classList.add('active');
+  } else {
+    document.getElementById('viewAuto').classList.add('active');
+  }
+  try { sessionStorage.setItem('viewMode', mode); } catch(e) {}
+}
+
+// Restore saved view mode
+try {
+  const saved = sessionStorage.getItem('viewMode');
+  if (saved) setView(saved);
+} catch(e) {}
+
+/* ============================================
+   Detail Toggle
+   ============================================ */
+function toggleDetail(id) {
+  const body = document.getElementById(id);
+  const btn = body.previousElementSibling;
+  body.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+
+/* ============================================
+   Event Listeners — Real-time calculation
+   ============================================ */
+// Main tab
+document.querySelectorAll('#tab-sim input, #tab-sim select').forEach(el => {
+  el.addEventListener('input', updateMain);
+  el.addEventListener('change', updateMain);
+});
+
+// Compare tab
+document.querySelectorAll('#tab-compare input, #tab-compare select').forEach(el => {
+  el.addEventListener('input', updateCompare);
+  el.addEventListener('change', updateCompare);
+});
+
+// Initial calculation
+updateMain();
+updateCompare();
+</script>
+
+</body>
+</html>
