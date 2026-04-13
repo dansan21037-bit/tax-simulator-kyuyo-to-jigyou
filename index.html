@@ -115,6 +115,16 @@ button {
   border-radius: 12px;
   font-size: 0.75rem;
 }
+.save-buttons { display: flex; gap: 6px; }
+.save-btn {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  border-radius: 12px;
+}
+.save-btn:hover { background: rgba(255,255,255,0.35); }
+.save-btn.load { background: rgba(255,255,255,0.1); }
 
 /* ============================================
    Tab Navigation
@@ -245,6 +255,50 @@ button {
 }
 
 /* ============================================
+   Breakdown Sections
+   ============================================ */
+.breakdown-section {
+  background: var(--gray-50);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+.breakdown-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gray-700);
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--gray-200);
+}
+.breakdown-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  padding: 3px 0;
+}
+.breakdown-item.sub {
+  padding-left: 12px;
+  font-size: 0.8rem;
+  color: var(--gray-500);
+}
+.breakdown-label { color: var(--gray-600); }
+.breakdown-value {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.next-year-kokuho {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+}
+
+/* ============================================
    Detail Table
    ============================================ */
 .detail-section { margin-top: 20px; }
@@ -304,8 +358,30 @@ button {
    Chart
    ============================================ */
 .chart-container {
-  max-width: 300px;
+  max-width: 320px;
   margin: 20px auto;
+}
+.chart-legend-custom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 16px;
+  margin-top: 10px;
+  font-size: 0.8rem;
+}
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.chart-legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.chart-legend-amount {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ============================================
@@ -385,60 +461,53 @@ button {
 }
 
 /* ============================================
+   Mobile Styles (shared rules)
+   ============================================ */
+.mobile-layout .sim-layout { grid-template-columns: 1fr; }
+.mobile-layout .compare-panels { grid-template-columns: 1fr; }
+.mobile-layout .form-grid { grid-template-columns: 1fr; }
+.mobile-layout .result-summary { grid-template-columns: 1fr; }
+.mobile-layout .header { flex-direction: column; align-items: flex-start; }
+.mobile-layout .diff-details { flex-direction: column; gap: 6px; }
+.mobile-layout .sim-layout { padding: 12px; gap: 12px; }
+.mobile-layout .compare-layout { padding: 12px; }
+.mobile-layout .sim-input-panel,
+.mobile-layout .sim-result-panel,
+.mobile-layout .compare-panel { padding: 14px; }
+.mobile-layout .form-section { margin-bottom: 14px; }
+.mobile-layout .form-section-title { font-size: 0.85rem; margin-bottom: 8px; }
+.mobile-layout .result-card { padding: 12px; }
+.mobile-layout .result-card .card-value { font-size: 1.3rem; }
+.mobile-layout .result-card.take-home .card-value { font-size: 1.5rem; }
+.mobile-layout .breakdown-section { padding: 10px 12px; }
+.mobile-layout .breakdown-item { font-size: 0.82rem; }
+.mobile-layout .chart-container { max-width: 260px; }
+.mobile-layout .tab-btn { padding: 10px 16px; font-size: 0.85rem; }
+.mobile-layout .compare-diff-summary { padding: 14px; }
+.mobile-layout .diff-main { font-size: 1.5rem; }
+.mobile-layout .compare-chart-container { padding: 14px; }
+.mobile-layout .header-right { width: 100%; justify-content: space-between; }
+.mobile-layout .detail-table th,
+.mobile-layout .detail-table td { padding: 5px 6px; font-size: 0.8rem; }
+
+/* ============================================
    Responsive — Mobile (default auto)
    ============================================ */
 @media (max-width: 768px) {
-  body:not(.force-pc) .sim-layout {
-    grid-template-columns: 1fr;
-  }
-  body:not(.force-pc) .compare-panels {
-    grid-template-columns: 1fr;
-  }
-  body:not(.force-pc) .form-grid {
-    grid-template-columns: 1fr;
-  }
-  body:not(.force-pc) .result-summary {
-    grid-template-columns: 1fr;
-  }
-  body:not(.force-pc) .header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  body:not(.force-pc) .diff-details {
-    flex-direction: column;
-    gap: 8px;
-  }
+  body:not(.force-pc) { /* auto mode */ }
 }
+/* Auto: apply mobile styles below 768px unless force-pc */
+@media (max-width: 768px) { body:not(.force-pc) .sim-layout { grid-template-columns: 1fr; } }
+@media (max-width: 768px) { body:not(.force-pc) .compare-panels { grid-template-columns: 1fr; } }
+@media (max-width: 768px) { body:not(.force-pc) .form-grid { grid-template-columns: 1fr; } }
+@media (max-width: 768px) { body:not(.force-pc) .result-summary { grid-template-columns: 1fr; } }
+@media (max-width: 768px) { body:not(.force-pc) .header { flex-direction: column; align-items: flex-start; } }
+@media (max-width: 768px) { body:not(.force-pc) .diff-details { flex-direction: column; gap: 6px; } }
 
-/* Force Mobile */
-body.force-mobile .sim-layout {
-  grid-template-columns: 1fr;
-}
-body.force-mobile .compare-panels {
-  grid-template-columns: 1fr;
-}
-body.force-mobile .form-grid {
-  grid-template-columns: 1fr;
-}
-body.force-mobile .result-summary {
-  grid-template-columns: 1fr;
-}
-body.force-mobile .header {
-  flex-direction: column;
-  align-items: flex-start;
-}
-body.force-mobile .diff-details {
-  flex-direction: column;
-  gap: 8px;
-}
-
+/* Force Mobile — uses shared .mobile-layout class (added by JS) */
 /* Force PC */
-body.force-pc .sim-layout {
-  grid-template-columns: 1fr 1fr;
-}
-body.force-pc .compare-panels {
-  grid-template-columns: 1fr 1fr;
-}
+body.force-pc .sim-layout { grid-template-columns: 1fr 1fr; }
+body.force-pc .compare-panels { grid-template-columns: 1fr 1fr; }
 
 /* ============================================
    Disclaimer
@@ -454,6 +523,92 @@ body.force-pc .compare-panels {
   max-width: 1400px;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* ============================================
+   Tax Saving Table
+   ============================================ */
+.ts-table-section { margin-top: 16px; }
+.ts-table-wrap { overflow-x: auto; }
+.ts-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  min-width: 500px;
+}
+.ts-table th, .ts-table td {
+  padding: 7px 10px;
+  text-align: right;
+  border-bottom: 1px solid var(--gray-200);
+  white-space: nowrap;
+}
+.ts-table th {
+  background: var(--gray-100);
+  font-weight: 600;
+  color: var(--gray-600);
+  position: sticky;
+  top: 0;
+}
+.ts-table th:first-child, .ts-table td:first-child {
+  text-align: left;
+  font-weight: 600;
+}
+.ts-table tr.highlight { background: #fef3c7; }
+.ts-table .benefit-row td { color: var(--accent); font-weight: 700; }
+
+/* ============================================
+   PDF Save Button
+   ============================================ */
+.pdf-btn {
+  background: var(--primary);
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  border-radius: var(--radius);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 16px 0;
+}
+.pdf-btn:hover { background: #1d4ed8; }
+.pdf-btn-wrap {
+  text-align: center;
+  padding: 0 20px;
+}
+/* Print: シミュレーション印刷モード */
+body.print-sim .tab-nav, body.print-sim #tab-compare, body.print-sim #tab-taxsave,
+body.print-sim .sim-input-panel, body.print-sim .pdf-btn-wrap,
+body.print-sim .save-buttons, body.print-sim .view-toggle,
+body.print-sim .disclaimer, body.print-sim .footer { display: none !important; }
+body.print-sim .sim-layout { grid-template-columns: 1fr !important; }
+body.print-sim .detail-body { display: block !important; }
+body.print-sim #tab-sim { display: block !important; }
+
+/* Print: 比較印刷モード */
+body.print-taxsave .tab-nav, body.print-taxsave #tab-sim,
+body.print-taxsave #tab-compare, body.print-taxsave .pdf-btn-wrap,
+body.print-taxsave .save-buttons, body.print-taxsave .view-toggle,
+body.print-taxsave .disclaimer, body.print-taxsave .footer { display: none !important; }
+body.print-taxsave #tab-taxsave { display: block !important; }
+body.print-taxsave .sim-layout { grid-template-columns: 1fr !important; }
+body.print-taxsave .sim-input-panel { display: none !important; }
+
+body.print-compare .tab-nav, body.print-compare #tab-sim, body.print-compare #tab-taxsave,
+body.print-compare .pdf-btn-wrap, body.print-compare .save-buttons,
+body.print-compare .view-toggle, body.print-compare .disclaimer,
+body.print-compare .footer { display: none !important; }
+body.print-compare #tab-compare { display: block !important; }
+body.print-compare .compare-panels { grid-template-columns: 1fr 1fr !important; }
+
+@media print {
+  body { background: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .header { background: var(--primary) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .result-card, .breakdown-section, .next-year-kokuho, .compare-diff-summary,
+  .compare-panel, .compare-chart-container {
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    break-inside: avoid;
+  }
+  .pdf-btn-wrap, .save-buttons, .view-toggle { display: none !important; }
 }
 
 /* ============================================
@@ -476,6 +631,10 @@ body.force-pc .compare-panels {
   <h1>税金・社会保険シミュレーション</h1>
   <div class="header-right">
     <span class="tax-year-badge">令和7年(2025)対応</span>
+    <div class="save-buttons">
+      <button class="save-btn" onclick="saveState()">保存</button>
+      <button class="save-btn load" onclick="loadState()">復元</button>
+    </div>
     <div class="view-toggle">
       <button id="viewAuto" class="active" onclick="setView('auto')">自動</button>
       <button id="viewPC" onclick="setView('pc')">PC版</button>
@@ -490,6 +649,7 @@ body.force-pc .compare-panels {
 <nav class="tab-nav">
   <button class="tab-btn active" data-tab="sim">シミュレーション</button>
   <button class="tab-btn" data-tab="compare">比較</button>
+  <button class="tab-btn" data-tab="taxsave">節税シミュレーション</button>
 </nav>
 
 <!-- ============================================
@@ -553,6 +713,23 @@ body.force-pc .compare-panels {
               <option value="65over">65歳以上</option>
             </select>
           </div>
+          <!-- 国保選択時のみ表示される手入力欄 -->
+          <div class="form-group full-width" id="kokuhoManualSection" style="display:none;">
+            <label for="kokuhoManual">今年の国保保険料（年額）</label>
+            <div class="input-suffix">
+              <input type="number" id="kokuhoManual" value="0" min="0" step="1000">
+              <span>円/年</span>
+            </div>
+            <div style="font-size:0.75rem;color:var(--gray-400);margin-top:2px;">※前年の所得で決定された今年の国保保険料を入力</div>
+          </div>
+          <div class="form-group full-width" id="nenkinManualSection" style="display:none;">
+            <label for="nenkinManual">国民年金保険料（年額）</label>
+            <div class="input-suffix">
+              <input type="number" id="nenkinManual" value="210120" min="0" step="1000">
+              <span>円/年</span>
+            </div>
+            <div style="font-size:0.75rem;color:var(--gray-400);margin-top:2px;">※令和7年度: 月17,510円×12=210,120円</div>
+          </div>
           <div class="form-group">
             <label for="dependents">扶養人数</label>
             <select id="dependents">
@@ -578,6 +755,14 @@ body.force-pc .compare-panels {
       <div class="form-section">
         <div class="form-section-title">その他所得控除</div>
         <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="manualSocialIns">社会保険料控除（追加分）</label>
+            <div class="input-suffix">
+              <input type="number" id="manualSocialIns" value="0" min="0" step="1000">
+              <span>円/年</span>
+            </div>
+            <div style="font-size:0.75rem;color:var(--gray-400);margin-top:2px;">※上記で自動計算された社保以外に控除する金額（前職分、家族分の国民年金等）</div>
+          </div>
           <div class="form-group">
             <label for="ideco">iDeCo掛金</label>
             <div class="input-suffix">
@@ -630,8 +815,55 @@ body.force-pc .compare-panels {
         </div>
       </div>
 
+      <!-- 税金内訳 -->
+      <div class="breakdown-section">
+        <div class="breakdown-title">税金の内訳</div>
+        <div class="breakdown-grid">
+          <div class="breakdown-item">
+            <span class="breakdown-label">所得税</span>
+            <span class="breakdown-value" id="bdIncomeTax">-</span>
+          </div>
+          <div class="breakdown-item sub">
+            <span class="breakdown-label">（うち復興特別所得税）</span>
+            <span class="breakdown-value" id="bdReconTax">-</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="breakdown-label">住民税</span>
+            <span class="breakdown-value" id="bdResidentTax">-</span>
+          </div>
+          <div class="breakdown-item sub">
+            <span class="breakdown-label">（所得割）</span>
+            <span class="breakdown-value" id="bdResidentIncome">-</span>
+          </div>
+          <div class="breakdown-item sub">
+            <span class="breakdown-label">（均等割）</span>
+            <span class="breakdown-value" id="bdResidentFlat">-</span>
+          </div>
+          <div class="breakdown-item sub" id="bdFurusatoRow" style="display:none">
+            <span class="breakdown-label">（ふるさと納税 税額控除）</span>
+            <span class="breakdown-value" id="bdFurusatoCredit">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 社会保険料内訳 -->
+      <div class="breakdown-section">
+        <div class="breakdown-title" id="bdInsuranceTitle">社会保険料の内訳</div>
+        <div class="breakdown-grid" id="bdInsuranceGrid">
+          <!-- JS で動的に生成 -->
+        </div>
+      </div>
+
+      <!-- 来年の国保見込み（国保選択時のみ表示） -->
+      <div class="breakdown-section next-year-kokuho" id="nextYearKokuhoSection" style="display:none;">
+        <div class="breakdown-title" style="color:var(--warning);">税金計算用の社保控除（前年所得ベース・手入力）</div>
+        <div class="breakdown-grid" id="nextYearKokuhoGrid"></div>
+        <div style="font-size:0.75rem;color:var(--gray-400);margin-top:6px;">※上の社保内訳は今年の所得で計算した金額（手取り計算用）。こちらは前年所得で決まった今年支払い済みの額（税の所得控除用）です。</div>
+      </div>
+
       <div class="chart-container">
         <canvas id="mainChart"></canvas>
+        <div class="chart-legend-custom" id="mainChartLegend"></div>
       </div>
 
       <div class="detail-section">
@@ -641,6 +873,10 @@ body.force-pc .compare-panels {
             <tbody></tbody>
           </table>
         </div>
+      </div>
+
+      <div class="pdf-btn-wrap">
+        <button class="pdf-btn" onclick="savePDF()">印刷 / PDF保存</button>
       </div>
     </div>
   </div>
@@ -656,6 +892,7 @@ body.force-pc .compare-panels {
       <div class="diff-label">年間手取り差額（B - A）</div>
       <div class="diff-main" id="diffTakeHome">0円</div>
       <div class="diff-details">
+        <div class="diff-item">税金差: <span id="diffTotalTax">0円</span></div>
         <div class="diff-item">所得税差: <span id="diffIncomeTax">0円</span></div>
         <div class="diff-item">住民税差: <span id="diffResidentTax">0円</span></div>
         <div class="diff-item">社保差: <span id="diffInsurance">0円</span></div>
@@ -714,6 +951,18 @@ body.force-pc .compare-panels {
                 <label><input type="radio" data-cmp="a" name="cmpInsA" data-field="insType" value="kokuho"> 国保</label>
               </div>
             </div>
+            <div class="form-group cmp-kokuho-a" style="display:none;">
+              <label>国保保険料</label>
+              <div class="input-suffix">
+                <input type="number" data-cmp="a" data-field="kokuhoManual" value="0" min="0" step="1000"><span>円/年</span>
+              </div>
+            </div>
+            <div class="form-group cmp-kokuho-a" style="display:none;">
+              <label>国民年金</label>
+              <div class="input-suffix">
+                <input type="number" data-cmp="a" data-field="nenkinManual" value="210120" min="0" step="1000"><span>円/年</span>
+              </div>
+            </div>
             <div class="form-group">
               <label>年齢</label>
               <select data-cmp="a" data-field="age">
@@ -741,6 +990,12 @@ body.force-pc .compare-panels {
         <div class="form-section">
           <div class="form-section-title">その他控除</div>
           <div class="form-grid">
+            <div class="form-group full-width">
+              <label>社保控除（追加分）</label>
+              <div class="input-suffix">
+                <input type="number" data-cmp="a" data-field="manualSocIns" value="0" min="0" step="1000"><span>円/年</span>
+              </div>
+            </div>
             <div class="form-group">
               <label>iDeCo</label>
               <div class="input-suffix">
@@ -769,6 +1024,14 @@ body.force-pc .compare-panels {
             <div class="card-label">社保</div>
             <div class="card-value" id="cmpInsA">-</div>
           </div>
+        </div>
+        <div class="breakdown-section" style="margin-top:12px;">
+          <div class="breakdown-title">税金内訳</div>
+          <div class="breakdown-grid" id="cmpTaxBreakdownA"></div>
+        </div>
+        <div class="breakdown-section">
+          <div class="breakdown-title" id="cmpInsTitleA">社保内訳</div>
+          <div class="breakdown-grid" id="cmpInsBreakdownA"></div>
         </div>
       </div>
 
@@ -823,6 +1086,18 @@ body.force-pc .compare-panels {
                 <label><input type="radio" data-cmp="b" name="cmpInsB" data-field="insType" value="kokuho"> 国保</label>
               </div>
             </div>
+            <div class="form-group cmp-kokuho-b" style="display:none;">
+              <label>国保保険料</label>
+              <div class="input-suffix">
+                <input type="number" data-cmp="b" data-field="kokuhoManual" value="0" min="0" step="1000"><span>円/年</span>
+              </div>
+            </div>
+            <div class="form-group cmp-kokuho-b" style="display:none;">
+              <label>国民年金</label>
+              <div class="input-suffix">
+                <input type="number" data-cmp="b" data-field="nenkinManual" value="210120" min="0" step="1000"><span>円/年</span>
+              </div>
+            </div>
             <div class="form-group">
               <label>年齢</label>
               <select data-cmp="b" data-field="age">
@@ -850,6 +1125,12 @@ body.force-pc .compare-panels {
         <div class="form-section">
           <div class="form-section-title">その他控除</div>
           <div class="form-grid">
+            <div class="form-group full-width">
+              <label>社保控除（追加分）</label>
+              <div class="input-suffix">
+                <input type="number" data-cmp="b" data-field="manualSocIns" value="0" min="0" step="1000"><span>円/年</span>
+              </div>
+            </div>
             <div class="form-group">
               <label>iDeCo</label>
               <div class="input-suffix">
@@ -879,12 +1160,169 @@ body.force-pc .compare-panels {
             <div class="card-value" id="cmpInsB">-</div>
           </div>
         </div>
+        <div class="breakdown-section" style="margin-top:12px;">
+          <div class="breakdown-title">税金内訳</div>
+          <div class="breakdown-grid" id="cmpTaxBreakdownB"></div>
+        </div>
+        <div class="breakdown-section">
+          <div class="breakdown-title" id="cmpInsTitleB">社保内訳</div>
+          <div class="breakdown-grid" id="cmpInsBreakdownB"></div>
+        </div>
       </div>
     </div>
 
     <!-- Compare Chart -->
     <div class="compare-chart-container">
       <canvas id="compareChart"></canvas>
+    </div>
+
+    <div class="pdf-btn-wrap">
+      <button class="pdf-btn" onclick="saveComparePDF()">比較結果を印刷 / PDF保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     Tax Saving Simulation Tab
+     ============================================ -->
+<div id="tab-taxsave" class="tab-content">
+  <div class="sim-layout">
+    <!-- Input -->
+    <div class="sim-input-panel">
+      <div class="form-section">
+        <div class="form-section-title">掛金設定</div>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>掛金種類</label>
+            <div class="radio-group">
+              <label><input type="radio" name="tsType" value="both" checked> 両方</label>
+              <label><input type="radio" name="tsType" value="shokibo"> 小規模企業共済のみ</label>
+              <label><input type="radio" name="tsType" value="ideco"> iDeCoのみ</label>
+            </div>
+          </div>
+          <div class="form-group" id="tsShokiboGroup">
+            <label for="tsShokiboMonthly">小規模企業共済 月額</label>
+            <div class="input-suffix">
+              <input type="number" id="tsShokiboMonthly" value="70000" min="1000" max="70000" step="500">
+              <span>円</span>
+            </div>
+            <div style="font-size:0.72rem;color:var(--gray-400);margin-top:2px;">上限: 70,000円/月</div>
+          </div>
+          <div class="form-group" id="tsIdecoGroup">
+            <label for="tsIdecoMonthly">iDeCo 月額</label>
+            <div class="input-suffix">
+              <input type="number" id="tsIdecoMonthly" value="23000" min="1000" max="68000" step="1000">
+              <span>円</span>
+            </div>
+            <div style="font-size:0.72rem;color:var(--gray-400);margin-top:2px;">上限: 自営業68,000円/会社員23,000円</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">積立条件</div>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="tsYears">積立年数: <span id="tsYearsDisplay">20</span>年</label>
+            <input type="range" id="tsYears" min="10" max="30" value="20" style="width:100%;">
+          </div>
+          <div class="form-group">
+            <label for="tsIncome">現在の合計所得（年）</label>
+            <div class="input-suffix">
+              <input type="number" id="tsIncome" value="0" min="0" step="10000">
+              <span>円</span>
+            </div>
+            <div style="font-size:0.72rem;color:var(--gray-400);margin-top:2px;">
+              <button onclick="syncIncomeFromMain()" style="font-size:0.72rem;padding:2px 8px;background:var(--primary-light);border:1px solid var(--primary);border-radius:4px;cursor:pointer;color:var(--primary);">メインタブから取得</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="tsOtherRetirement">他の退職金見込み</label>
+            <div class="input-suffix">
+              <input type="number" id="tsOtherRetirement" value="0" min="0" step="100000">
+              <span>円</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="tsIdecoReturn">iDeCo想定利回り</label>
+            <select id="tsIdecoReturn">
+              <option value="0">0%（元本のみ）</option>
+              <option value="0.03" selected>3%</option>
+              <option value="0.05">5%</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div class="sim-result-panel">
+      <!-- サマリー -->
+      <div class="result-summary">
+        <div class="result-card take-home">
+          <div class="card-label">実質メリット合計</div>
+          <div class="card-value" id="tsTotalBenefit">-</div>
+          <div class="card-monthly" id="tsTotalBenefitSub"></div>
+        </div>
+        <div class="result-card" style="background:#fef3c7;border:2px solid #f59e0b;">
+          <div class="card-label">累計節税額（積立中）</div>
+          <div class="card-value" style="color:#d97706;" id="tsCumulativeSaving">-</div>
+        </div>
+        <div class="result-card" style="background:#dbeafe;border:2px solid #3b82f6;">
+          <div class="card-label">運用益</div>
+          <div class="card-value" style="color:#2563eb;" id="tsInvestGain">-</div>
+          <div class="card-monthly" id="tsInvestGainSub"></div>
+        </div>
+        <div class="result-card" style="background:var(--primary-light);">
+          <div class="card-label">受取見込み額</div>
+          <div class="card-value" style="color:var(--primary);" id="tsReceiveAmount">-</div>
+          <div class="card-monthly" id="tsReceiveAmountSub"></div>
+        </div>
+        <div class="result-card tax">
+          <div class="card-label">受取時の税金</div>
+          <div class="card-value" id="tsReceiveTax">-</div>
+        </div>
+        <div class="result-card" style="background:var(--gray-100);">
+          <div class="card-label">掛金合計</div>
+          <div class="card-value" style="color:var(--gray-600);" id="tsTotalContrib">-</div>
+        </div>
+      </div>
+
+      <!-- 内訳 -->
+      <div class="breakdown-section">
+        <div class="breakdown-title">節税の内訳（年間）</div>
+        <div class="breakdown-grid" id="tsAnnualBreakdown"></div>
+      </div>
+      <div class="breakdown-section">
+        <div class="breakdown-title">受取時の計算</div>
+        <div class="breakdown-grid" id="tsRetireBreakdown"></div>
+      </div>
+
+      <!-- 実質メリットの内訳 -->
+      <div class="breakdown-section" style="background:var(--accent-light);border:1px solid var(--accent);">
+        <div class="breakdown-title" style="color:var(--accent);border-bottom-color:var(--accent);">実質メリットの内訳</div>
+        <div class="breakdown-grid" id="tsBenefitBreakdown"></div>
+      </div>
+
+      <!-- 年数別テーブル -->
+      <div class="ts-table-section">
+        <div class="breakdown-title" style="margin-bottom:8px;">年数別シミュレーション</div>
+        <div class="ts-table-wrap">
+          <table class="ts-table" id="tsYearTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- グラフ -->
+      <div class="compare-chart-container" style="margin-top:16px;">
+        <canvas id="taxSaveChart"></canvas>
+      </div>
+
+      <div class="pdf-btn-wrap">
+        <button class="pdf-btn" onclick="saveTaxSavePDF()">印刷 / PDF保存</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1049,7 +1487,8 @@ function calcAll(params) {
   const {
     salaryIncome, bizRevenue, bizExpense, blueDeduction,
     insuranceType, age, dependents, spouse,
-    ideco, lifeInsurance, furusato, otherDeduction
+    kokuhoManual = 0, nenkinManual = 210120,
+    manualSocialIns = 0, ideco, lifeInsurance, furusato, otherDeduction
   } = params;
 
   // 1) 給与所得
@@ -1064,19 +1503,27 @@ function calcAll(params) {
   const totalIncome = salaryEarnings + bizEarnings;
 
   // 4) 社会保険料
-  let insurance;
+  let insurance;         // 結果表示・手取り計算用（今年の所得ベース）
+  let insuranceForDeduction; // 税金計算の所得控除用
   if (insuranceType === 'shakai') {
     insurance = calcShakaiHoken(salaryIncome, age);
+    insuranceForDeduction = insurance.total;
   } else {
+    // 結果・手取り: 今年の所得で自動計算した国保+国民年金
     insurance = calcKokuho(totalIncome, age);
+    // 税金計算（所得控除）: 手入力の国保+年金（前年所得ベース＝今年実際に払った額）
+    insuranceForDeduction = kokuhoManual + nenkinManual;
   }
+
+  // 手入力の国保・年金（表示用に保持）
+  const kokuhoManualTotal = kokuhoManual + nenkinManual;
 
   // 5) 所得控除
   const basicDeductionIT = calcBasicDeductionIncomeTax(totalIncome);
   const basicDeductionRT = calcBasicDeductionResidentTax(totalIncome);
   const dependentDeduction = dependents * 380_000;
   const spouseDeduction = spouse === 'general' ? 380_000 : 0;
-  const socialInsDeduction = insurance.total;
+  const socialInsDeduction = insuranceForDeduction + manualSocialIns;
   // ふるさと納税: 所得税は寄附金控除（所得控除）、住民税は税額控除（別途計算）
   const furusatoDeductionIT = Math.max(furusato - 2_000, 0);
 
@@ -1112,9 +1559,9 @@ function calcAll(params) {
     salaryDeduction, salaryEarnings,
     bizProfit, bizEarnings,
     totalIncome,
-    insurance,
+    insurance, insuranceForDeduction, kokuhoManual, nenkinManual, kokuhoManualTotal,
     basicDeductionIT, basicDeductionRT,
-    dependentDeduction, spouseDeduction, socialInsDeduction,
+    dependentDeduction, spouseDeduction, socialInsDeduction, manualSocialIns,
     ideco, lifeInsurance, furusatoDeductionIT, furusatoResidentCredit, otherDeduction,
     totalDeductionIT, totalDeductionRT,
     taxableIncomeIT, taxableIncomeRT,
@@ -1149,22 +1596,56 @@ function fmtDiff(n) {
    ============================================ */
 let mainChart = null;
 
+// 国保の概算値をセットするヘルパー
+function autoFillKokuho() {
+  const salary = Number(document.getElementById('salaryIncome').value) || 0;
+  const bizRev = Number(document.getElementById('bizRevenue').value) || 0;
+  const bizExp = Number(document.getElementById('bizExpense').value) || 0;
+  const blue = Number(document.getElementById('blueDeduction').value) || 0;
+  const age = document.getElementById('age').value;
+  const salaryEarnings = Math.max(salary - calcSalaryDeduction(salary), 0);
+  const bizEarnings = Math.max(Math.max(bizRev - bizExp, 0) - blue, 0);
+  const totalIncome = salaryEarnings + bizEarnings;
+  const est = calcKokuho(totalIncome, age);
+  const kokuhoEl = document.getElementById('kokuhoManual');
+  // 手入力が0のときだけ自動セット
+  if (Number(kokuhoEl.value) === 0 || kokuhoEl.dataset.autoFilled === 'true') {
+    kokuhoEl.value = est.kokuho;
+    kokuhoEl.dataset.autoFilled = 'true';
+  }
+}
+
 function getMainInputs() {
+  const insuranceType = document.querySelector('input[name="insuranceType"]:checked').value;
+  // 国保選択時の手入力欄の表示切替
+  const isKokuho = insuranceType === 'kokuho';
+  document.getElementById('kokuhoManualSection').style.display = isKokuho ? '' : 'none';
+  document.getElementById('nenkinManualSection').style.display = isKokuho ? '' : 'none';
+  // 国保選択時、初回は概算値を自動セット
+  if (isKokuho) autoFillKokuho();
   return {
     salaryIncome: Number(document.getElementById('salaryIncome').value) || 0,
     bizRevenue: Number(document.getElementById('bizRevenue').value) || 0,
     bizExpense: Number(document.getElementById('bizExpense').value) || 0,
     blueDeduction: Number(document.getElementById('blueDeduction').value) || 0,
-    insuranceType: document.querySelector('input[name="insuranceType"]:checked').value,
+    insuranceType,
     age: document.getElementById('age').value,
     dependents: Number(document.getElementById('dependents').value) || 0,
     spouse: document.querySelector('input[name="spouse"]:checked').value,
+    kokuhoManual: Number(document.getElementById('kokuhoManual').value) || 0,
+    nenkinManual: Number(document.getElementById('nenkinManual').value) || 0,
+    manualSocialIns: Number(document.getElementById('manualSocialIns').value) || 0,
     ideco: Number(document.getElementById('ideco').value) || 0,
     lifeInsurance: Number(document.getElementById('lifeInsurance').value) || 0,
     furusato: Number(document.getElementById('furusato').value) || 0,
     otherDeduction: Number(document.getElementById('otherDeduction').value) || 0,
   };
 }
+
+// 国保手入力欄を手動変更した場合、自動セットを停止
+document.getElementById('kokuhoManual').addEventListener('input', function() {
+  this.dataset.autoFilled = 'false';
+});
 
 function updateMain() {
   const inputs = getMainInputs();
@@ -1177,6 +1658,66 @@ function updateMain() {
   document.getElementById('totalTaxMonthly').textContent = '月額: ' + fmtShort(r.totalTax / 12);
   document.getElementById('totalInsurance').textContent = fmtShort(r.insurance.total);
   document.getElementById('totalInsuranceMonthly').textContent = '月額: ' + fmtShort(r.insurance.total / 12);
+
+  // Tax breakdown
+  document.getElementById('bdIncomeTax').textContent = fmt(r.incomeTaxTotal);
+  document.getElementById('bdReconTax').textContent = fmt(r.reconstructionTax);
+  document.getElementById('bdResidentTax').textContent = fmt(r.residentTax.total);
+  document.getElementById('bdResidentIncome').textContent = fmt(r.residentTax.incomeRate);
+  document.getElementById('bdResidentFlat').textContent = fmt(r.residentTax.perCapita);
+  const furusatoRow = document.getElementById('bdFurusatoRow');
+  if (r.residentTax.furusatoCredit > 0) {
+    furusatoRow.style.display = '';
+    document.getElementById('bdFurusatoCredit').textContent = '-' + fmt(r.residentTax.furusatoCredit);
+  } else {
+    furusatoRow.style.display = 'none';
+  }
+
+  // Insurance breakdown
+  document.getElementById('bdInsuranceTitle').textContent =
+    r.insurance.type === '社会保険' ? '社会保険料の内訳' : '国保・国民年金の内訳';
+  const insGrid = document.getElementById('bdInsuranceGrid');
+  insGrid.innerHTML = '';
+  const addInsRow = (label, value, isSub) => {
+    const div = document.createElement('div');
+    div.className = 'breakdown-item' + (isSub ? ' sub' : '');
+    div.innerHTML = `<span class="breakdown-label">${label}</span><span class="breakdown-value">${fmt(value)}</span>`;
+    insGrid.appendChild(div);
+  };
+  if (r.insurance.type === '社会保険') {
+    addInsRow('健康保険料', r.insurance.health);
+    addInsRow('厚生年金保険料', r.insurance.pension);
+    if (r.insurance.nursing > 0) addInsRow('介護保険料', r.insurance.nursing);
+    addInsRow('雇用保険料', r.insurance.employment);
+  } else {
+    // 今年の所得ベースで自動計算された国保（結果・手取り用）
+    addInsRow('国保（医療分）', r.insurance.kokuhoMed);
+    addInsRow('国保（支援分）', r.insurance.kokuhoSup);
+    if (r.insurance.kokuhoNur > 0) addInsRow('国保（介護分）', r.insurance.kokuhoNur);
+    addInsRow('国民年金', r.insurance.nenkin);
+  }
+  if (r.manualSocialIns > 0) {
+    addInsRow('社保控除 追加分', r.manualSocialIns);
+  }
+
+  // 国保選択時: 税金計算に使った控除額（手入力＝前年所得ベース）を表示
+  const nextSection = document.getElementById('nextYearKokuhoSection');
+  if (r.insurance.type === '国保+国民年金') {
+    nextSection.style.display = '';
+    const nextGrid = document.getElementById('nextYearKokuhoGrid');
+    nextGrid.innerHTML = '';
+    const addNextRow = (label, value, isSub) => {
+      const div = document.createElement('div');
+      div.className = 'breakdown-item' + (isSub ? ' sub' : '');
+      div.innerHTML = `<span class="breakdown-label">${label}</span><span class="breakdown-value">${fmt(value)}</span>`;
+      nextGrid.appendChild(div);
+    };
+    addNextRow('国保保険料（手入力）', r.kokuhoManual);
+    addNextRow('国民年金（手入力）', r.nenkinManual);
+    addNextRow('社保控除に使用する合計', r.kokuhoManualTotal);
+  } else {
+    nextSection.style.display = 'none';
+  }
 
   // Detail table
   const rows = [
@@ -1258,12 +1799,15 @@ function updateMain() {
   }
 
   // Chart
+  const chartLabels = ['手取り', '所得税', '住民税', '社会保険料'];
+  const chartColors = ['#059669', '#dc2626', '#d97706', '#2563eb'];
   const chartData = [
     Math.max(r.takeHome, 0),
     r.incomeTaxTotal,
     r.residentTax.total,
     r.insurance.total
   ];
+  const chartTotal = chartData.reduce((a, b) => a + b, 0);
   if (mainChart) {
     mainChart.data.datasets[0].data = chartData;
     mainChart.update();
@@ -1271,22 +1815,24 @@ function updateMain() {
     mainChart = new Chart(document.getElementById('mainChart'), {
       type: 'doughnut',
       data: {
-        labels: ['手取り', '所得税', '住民税', '社会保険料'],
+        labels: chartLabels,
         datasets: [{
           data: chartData,
-          backgroundColor: ['#059669', '#dc2626', '#d97706', '#2563eb'],
+          backgroundColor: chartColors,
           borderWidth: 2,
           borderColor: '#fff'
         }]
       },
       options: {
         responsive: true,
+        cutout: '55%',
         plugins: {
-          legend: { position: 'bottom', labels: { font: { size: 12 } } },
+          legend: { display: false },
           tooltip: {
             callbacks: {
               label: function(ctx) {
-                return ctx.label + ': ' + fmtShort(ctx.raw);
+                const pct = chartTotal > 0 ? (ctx.raw / chartTotal * 100).toFixed(1) : 0;
+                return ctx.label + ': ' + fmtShort(ctx.raw) + ' (' + pct + '%)';
               }
             }
           }
@@ -1294,6 +1840,16 @@ function updateMain() {
       }
     });
   }
+  // カスタム凡例（金額+割合付き）
+  const legendEl = document.getElementById('mainChartLegend');
+  legendEl.innerHTML = chartLabels.map((label, i) => {
+    const pct = chartTotal > 0 ? (chartData[i] / chartTotal * 100).toFixed(1) : 0;
+    return `<div class="chart-legend-item">
+      <span class="chart-legend-dot" style="background:${chartColors[i]}"></span>
+      <span>${label}</span>
+      <span class="chart-legend-amount">${fmtShort(chartData[i])} (${pct}%)</span>
+    </div>`;
+  }).join('');
 }
 
 /* ============================================
@@ -1313,6 +1869,9 @@ function getCmpInputs(side) {
     age: q('age')?.value || 'under40',
     dependents: Number(q('dependents')?.value) || 0,
     spouse: radio('spouse')?.value || 'none',
+    kokuhoManual: Number(q('kokuhoManual')?.value) || 0,
+    nenkinManual: Number(q('nenkinManual')?.value) || 210120,
+    manualSocialIns: Number(q('manualSocIns')?.value) || 0,
     ideco: Number(q('ideco')?.value) || 0,
     lifeInsurance: Number(q('lifeIns')?.value) || 0,
     furusato: 0,
@@ -1321,6 +1880,12 @@ function getCmpInputs(side) {
 }
 
 function updateCompare() {
+  // 国保手入力欄の表示切替
+  const insTypeA = document.querySelector('[data-cmp="a"][data-field="insType"]:checked')?.value;
+  const insTypeB = document.querySelector('[data-cmp="b"][data-field="insType"]:checked')?.value;
+  document.querySelectorAll('.cmp-kokuho-a').forEach(el => el.style.display = insTypeA === 'kokuho' ? '' : 'none');
+  document.querySelectorAll('.cmp-kokuho-b').forEach(el => el.style.display = insTypeB === 'kokuho' ? '' : 'none');
+
   const a = calcAll(getCmpInputs('a'));
   const b = calcAll(getCmpInputs('b'));
 
@@ -1332,12 +1897,51 @@ function updateCompare() {
   document.getElementById('cmpTaxB').textContent = fmtShort(b.totalTax);
   document.getElementById('cmpInsB').textContent = fmtShort(b.insurance.total);
 
+  // Breakdown helper
+  function fillCmpBreakdown(r, suffix) {
+    // Tax breakdown
+    const taxGrid = document.getElementById('cmpTaxBreakdown' + suffix);
+    taxGrid.innerHTML = '';
+    const addRow = (grid, label, value, isSub) => {
+      const div = document.createElement('div');
+      div.className = 'breakdown-item' + (isSub ? ' sub' : '');
+      div.innerHTML = `<span class="breakdown-label">${label}</span><span class="breakdown-value">${fmt(value)}</span>`;
+      grid.appendChild(div);
+    };
+    addRow(taxGrid, '所得税', r.incomeTaxTotal);
+    addRow(taxGrid, '（復興特別所得税）', r.reconstructionTax, true);
+    addRow(taxGrid, '住民税', r.residentTax.total);
+    addRow(taxGrid, '（所得割）', r.residentTax.incomeRate, true);
+    addRow(taxGrid, '（均等割）', r.residentTax.perCapita, true);
+
+    // Insurance breakdown
+    const insGrid = document.getElementById('cmpInsBreakdown' + suffix);
+    insGrid.innerHTML = '';
+    document.getElementById('cmpInsTitle' + suffix).textContent =
+      r.insurance.type === '社会保険' ? '社保内訳' : '国保・年金内訳';
+    if (r.insurance.type === '社会保険') {
+      addRow(insGrid, '健康保険料', r.insurance.health);
+      addRow(insGrid, '厚生年金', r.insurance.pension);
+      if (r.insurance.nursing > 0) addRow(insGrid, '介護保険', r.insurance.nursing);
+      addRow(insGrid, '雇用保険', r.insurance.employment);
+    } else {
+      addRow(insGrid, '国保（医療分）', r.insurance.kokuhoMed);
+      addRow(insGrid, '国保（支援分）', r.insurance.kokuhoSup);
+      if (r.insurance.kokuhoNur > 0) addRow(insGrid, '国保（介護分）', r.insurance.kokuhoNur);
+      addRow(insGrid, '国民年金', r.insurance.nenkin);
+    }
+    if (r.manualSocialIns > 0) addRow(insGrid, '社保控除 追加分', r.manualSocialIns);
+  }
+  fillCmpBreakdown(a, 'A');
+  fillCmpBreakdown(b, 'B');
+
   // Diff
   const diffTH = b.takeHome - a.takeHome;
   const diffEl = document.getElementById('diffTakeHome');
   diffEl.textContent = fmtDiff(diffTH);
   diffEl.className = 'diff-main ' + (diffTH >= 0 ? 'positive' : 'negative');
 
+  document.getElementById('diffTotalTax').textContent = fmtDiff(b.totalTax - a.totalTax);
   document.getElementById('diffIncomeTax').textContent = fmtDiff(b.incomeTaxTotal - a.incomeTaxTotal);
   document.getElementById('diffResidentTax').textContent = fmtDiff(b.residentTax.total - a.residentTax.total);
   document.getElementById('diffInsurance').textContent = fmtDiff(b.insurance.total - a.insurance.total);
@@ -1368,7 +1972,10 @@ function updateCompare() {
       options: {
         responsive: true,
         plugins: {
-          legend: { position: 'top' },
+          legend: {
+            position: 'top',
+            labels: { font: { size: 13, weight: 'bold' }, padding: 16 }
+          },
           tooltip: {
             callbacks: {
               label: function(ctx) {
@@ -1378,20 +1985,43 @@ function updateCompare() {
           }
         },
         scales: {
+          x: {
+            ticks: { font: { size: 12, weight: '600' } }
+          },
           y: {
             beginAtZero: true,
             ticks: {
-              callback: function(v) { return fmtShort(v); }
+              callback: function(v) { return fmtShort(v); },
+              font: { size: 11 }
             }
           }
         }
-      }
+      },
+      plugins: [{
+        id: 'barValueLabels',
+        afterDatasetsDraw(chart) {
+          const ctx = chart.ctx;
+          chart.data.datasets.forEach((ds, i) => {
+            const meta = chart.getDatasetMeta(i);
+            meta.data.forEach((bar, idx) => {
+              const val = ds.data[idx];
+              if (val === 0) return;
+              ctx.save();
+              ctx.fillStyle = '#374151';
+              ctx.font = 'bold 11px sans-serif';
+              ctx.textAlign = 'center';
+              ctx.fillText(fmtShort(val), bar.x, bar.y - 6);
+              ctx.restore();
+            });
+          });
+        }
+      }]
     });
   }
 }
 
 function copyAtoB() {
-  const fields = ['salary', 'bizRevenue', 'bizExpense', 'blue', 'age', 'dependents', 'ideco', 'lifeIns'];
+  const fields = ['salary', 'bizRevenue', 'bizExpense', 'blue', 'age', 'dependents', 'kokuhoManual', 'nenkinManual', 'manualSocIns', 'ideco', 'lifeIns'];
   for (const f of fields) {
     const aEl = document.querySelector(`[data-cmp="a"][data-field="${f}"]`);
     const bEl = document.querySelector(`[data-cmp="b"][data-field="${f}"]`);
@@ -1425,19 +2055,27 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
    View Toggle (Auto / PC / Mobile)
    ============================================ */
 function setView(mode) {
-  document.body.classList.remove('force-pc', 'force-mobile');
+  document.body.classList.remove('force-pc', 'force-mobile', 'mobile-layout');
   document.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
   if (mode === 'pc') {
     document.body.classList.add('force-pc');
     document.getElementById('viewPC').classList.add('active');
   } else if (mode === 'mobile') {
-    document.body.classList.add('force-mobile');
+    document.body.classList.add('force-mobile', 'mobile-layout');
     document.getElementById('viewMobile').classList.add('active');
   } else {
     document.getElementById('viewAuto').classList.add('active');
+    // 自動モード: 画面幅で判定
+    if (window.innerWidth <= 768) document.body.classList.add('mobile-layout');
   }
   try { sessionStorage.setItem('viewMode', mode); } catch(e) {}
 }
+// 自動モード時にリサイズでmobile-layoutを切替
+window.addEventListener('resize', () => {
+  if (!document.body.classList.contains('force-pc') && !document.body.classList.contains('force-mobile')) {
+    document.body.classList.toggle('mobile-layout', window.innerWidth <= 768);
+  }
+});
 
 // Restore saved view mode
 try {
@@ -1470,9 +2108,453 @@ document.querySelectorAll('#tab-compare input, #tab-compare select').forEach(el 
   el.addEventListener('change', updateCompare);
 });
 
+/* ============================================
+   PDF Save (ブラウザ印刷ダイアログ使用)
+   ============================================ */
+function savePDF() {
+  // 詳細を開く
+  const detailBody = document.getElementById('mainDetail');
+  const detailBtn = detailBody.previousElementSibling;
+  const wasOpen = detailBody.classList.contains('open');
+  if (!wasOpen) {
+    detailBody.classList.add('open');
+    detailBtn.classList.add('open');
+  }
+  document.body.classList.add('print-sim');
+  window.print();
+  document.body.classList.remove('print-sim');
+  if (!wasOpen) {
+    detailBody.classList.remove('open');
+    detailBtn.classList.remove('open');
+  }
+}
+
+function saveComparePDF() {
+  document.body.classList.add('print-compare');
+  window.print();
+  document.body.classList.remove('print-compare');
+}
+
+/* ============================================
+   Save / Load State (localStorage)
+   ============================================ */
+function saveState() {
+  const data = {};
+  // シミュレーションタブの全入力
+  document.querySelectorAll('#tab-sim input, #tab-sim select').forEach(el => {
+    const key = el.id || el.name;
+    if (!key) return;
+    if (el.type === 'radio') {
+      if (el.checked) data[key] = el.value;
+    } else {
+      data[key] = el.value;
+    }
+  });
+  // 比較タブの全入力
+  document.querySelectorAll('#tab-compare input, #tab-compare select').forEach(el => {
+    const cmp = el.dataset.cmp;
+    const field = el.dataset.field;
+    const name = el.name;
+    const key = cmp && field ? 'cmp_' + cmp + '_' + field : name || el.id;
+    if (!key) return;
+    if (el.type === 'radio') {
+      if (el.checked) data[key] = el.value;
+    } else {
+      data[key] = el.value;
+    }
+  });
+  localStorage.setItem('taxSimState', JSON.stringify(data));
+  localStorage.setItem('taxSimSavedAt', new Date().toLocaleString('ja-JP'));
+  alert('保存しました（' + new Date().toLocaleString('ja-JP') + '）');
+}
+
+function loadState() {
+  const json = localStorage.getItem('taxSimState');
+  if (!json) { alert('保存データがありません'); return; }
+  const savedAt = localStorage.getItem('taxSimSavedAt') || '';
+  if (!confirm('保存データを復元しますか？\n保存日時: ' + savedAt)) return;
+  const data = JSON.parse(json);
+
+  // シミュレーションタブ復元
+  document.querySelectorAll('#tab-sim input, #tab-sim select').forEach(el => {
+    const key = el.id || el.name;
+    if (!key || !(key in data)) return;
+    if (el.type === 'radio') {
+      el.checked = (el.value === data[key]);
+    } else {
+      el.value = data[key];
+    }
+  });
+  // 比較タブ復元
+  document.querySelectorAll('#tab-compare input, #tab-compare select').forEach(el => {
+    const cmp = el.dataset.cmp;
+    const field = el.dataset.field;
+    const name = el.name;
+    const key = cmp && field ? 'cmp_' + cmp + '_' + field : name || el.id;
+    if (!key || !(key in data)) return;
+    if (el.type === 'radio') {
+      el.checked = (el.value === data[key]);
+    } else {
+      el.value = data[key];
+    }
+  });
+  // 国保手入力の自動上書きを停止
+  document.getElementById('kokuhoManual').dataset.autoFilled = 'false';
+  updateMain();
+  updateCompare();
+}
+
+/* ============================================
+   Tax Saving Simulation
+   ============================================ */
+let taxSaveChart = null;
+
+// 退職所得控除額
+function calcRetirementDeduction(years) {
+  if (years <= 0) return 0;
+  if (years <= 20) return Math.max(400_000 * years, 800_000);
+  return 8_000_000 + 700_000 * (years - 20);
+}
+
+// 退職所得にかかる税金（分離課税）
+function calcRetirementTax(receiveAmount, deduction) {
+  const retirementIncome = Math.max(Math.floor((receiveAmount - deduction) / 2), 0);
+  if (retirementIncome <= 0) return { incomeTax: 0, residentTax: 0, reconstructionTax: 0, total: 0, retirementIncome };
+  const incomeTax = calcIncomeTax(retirementIncome);
+  const reconstructionTax = Math.floor(incomeTax * 0.021);
+  const residentTax = Math.floor(retirementIncome * 0.10);
+  return {
+    incomeTax,
+    reconstructionTax,
+    residentTax,
+    total: incomeTax + reconstructionTax + residentTax,
+    retirementIncome
+  };
+}
+
+// 小規模企業共済の受取額概算（予定利率1.0%複利近似）
+function calcShokiboReceive(monthlyAmount, years) {
+  const annualAmount = monthlyAmount * 12;
+  let total = 0;
+  for (let i = 0; i < years; i++) {
+    total = (total + annualAmount) * 1.01;
+  }
+  return Math.floor(total);
+}
+
+// iDeCo受取額（複利計算）
+function calcIdecoReceive(monthlyAmount, years, annualReturn) {
+  if (annualReturn === 0) return monthlyAmount * 12 * years;
+  const monthlyReturn = annualReturn / 12;
+  let total = 0;
+  for (let m = 0; m < years * 12; m++) {
+    total = (total + monthlyAmount) * (1 + monthlyReturn);
+  }
+  return Math.floor(total);
+}
+
+// 年数別の節税計算
+function calcTaxSavingForYears(params, years) {
+  const { shokiboMonthly, idecoMonthly, tsType, income, otherRetirement, idecoReturn } = params;
+
+  const shokiboActive = tsType !== 'ideco';
+  const idecoActive = tsType !== 'shokibo';
+
+  const shokiboAnnual = shokiboActive ? shokiboMonthly * 12 : 0;
+  const idecoAnnual = idecoActive ? idecoMonthly * 12 : 0;
+  const totalAnnualContrib = shokiboAnnual + idecoAnnual;
+
+  // メインタブの課税所得を使って正確に計算
+  // mainCalcResultがあればそこから課税所得を取得、なければ概算
+  let taxableWithout;
+  if (mainCalcResult && mainCalcResult.taxableIncomeIT > 0) {
+    taxableWithout = mainCalcResult.taxableIncomeIT;
+  } else {
+    const basicDeductionIT = calcBasicDeductionIncomeTax(income);
+    taxableWithout = Math.max(income - basicDeductionIT, 0);
+  }
+  const taxableWith = Math.max(taxableWithout - totalAnnualContrib, 0);
+
+  // 所得税の差額（掛金控除なし vs あり）
+  const itWithout = calcIncomeTax(taxableWithout);
+  const itWith = calcIncomeTax(taxableWith);
+  const incomeTaxSaving = itWithout - itWith;
+  // 復興税の差額
+  const reconSaving = Math.floor(itWithout * 0.021) - Math.floor(itWith * 0.021);
+  // 住民税の差額（10%）
+  const residentTaxSaving = Math.floor(totalAnnualContrib * 0.10);
+  const annualSaving = incomeTaxSaving + reconSaving + residentTaxSaving;
+  const cumulativeSaving = annualSaving * years;
+
+  // 表示用の限界税率（メインタブの課税所得ベース）
+  const marginalRateOriginal = getMarginalTaxRate(taxableWithout);
+
+  // 受取額
+  const shokiboReceive = shokiboActive ? calcShokiboReceive(shokiboMonthly, years) : 0;
+  const idecoReceive = idecoActive ? calcIdecoReceive(idecoMonthly, years, idecoReturn) : 0;
+  const totalReceive = shokiboReceive + idecoReceive;
+
+  // 退職所得控除（他の退職金と控除枠を共有）
+  const retirementDeduction = calcRetirementDeduction(years);
+  const totalRetirementIncome = totalReceive + otherRetirement;
+  const retireTax = calcRetirementTax(totalRetirementIncome, retirementDeduction);
+
+  // 他の退職金にかかる税金（比較用）
+  const otherRetireTax = otherRetirement > 0 ? calcRetirementTax(otherRetirement, retirementDeduction) : { total: 0 };
+  // 共済・iDeCoに起因する追加税金
+  const additionalRetireTax = retireTax.total - otherRetireTax.total;
+
+  const shokiboContrib = shokiboAnnual * years;
+  const idecoContrib = idecoAnnual * years;
+  const totalContrib = shokiboContrib + idecoContrib;
+  const shokiboGain = shokiboReceive - shokiboContrib;
+  const idecoGain = idecoReceive - idecoContrib;
+  const investGain = shokiboGain + idecoGain;
+  const netTaxSaving = cumulativeSaving - Math.max(additionalRetireTax, 0);
+  const totalBenefit = netTaxSaving + investGain;
+
+  return {
+    shokiboAnnual, idecoAnnual, totalAnnualContrib,
+    taxableWithout, marginalRateOriginal,
+    incomeTaxSaving, reconSaving, residentTaxSaving, annualSaving, cumulativeSaving,
+    shokiboReceive, idecoReceive, totalReceive,
+    shokiboContrib, idecoContrib, shokiboGain, idecoGain, idecoReturn,
+    retirementDeduction, retireTax, additionalRetireTax,
+    totalContrib, netTaxSaving, investGain, totalBenefit,
+    years
+  };
+}
+
+function getTaxSaveInputs() {
+  const tsType = document.querySelector('input[name="tsType"]:checked').value;
+  // 表示切替
+  document.getElementById('tsShokiboGroup').style.display = tsType === 'ideco' ? 'none' : '';
+  document.getElementById('tsIdecoGroup').style.display = tsType === 'shokibo' ? 'none' : '';
+
+  return {
+    tsType,
+    shokiboMonthly: Number(document.getElementById('tsShokiboMonthly').value) || 0,
+    idecoMonthly: Number(document.getElementById('tsIdecoMonthly').value) || 0,
+    years: Number(document.getElementById('tsYears').value) || 20,
+    income: Number(document.getElementById('tsIncome').value) || 0,
+    otherRetirement: Number(document.getElementById('tsOtherRetirement').value) || 0,
+    idecoReturn: Number(document.getElementById('tsIdecoReturn').value) || 0,
+  };
+}
+
+// メインタブの計算結果をキャッシュ（節税シミュで使う）
+let mainCalcResult = null;
+
+function syncIncomeFromMain() {
+  const inputs = getMainInputs();
+  mainCalcResult = calcAll(inputs);
+  document.getElementById('tsIncome').value = mainCalcResult.totalIncome;
+  updateTaxSave();
+}
+
+function updateTaxSave() {
+  const params = getTaxSaveInputs();
+  const years = params.years;
+  document.getElementById('tsYearsDisplay').textContent = years;
+
+  const r = calcTaxSavingForYears(params, years);
+
+  // サマリー
+  document.getElementById('tsTotalBenefit').textContent = fmtShort(r.totalBenefit);
+  document.getElementById('tsTotalBenefitSub').textContent =
+    '節税' + fmtShort(r.netTaxSaving) + ' + 運用益' + fmtShort(r.investGain);
+  document.getElementById('tsCumulativeSaving').textContent = fmtShort(r.cumulativeSaving);
+  document.getElementById('tsInvestGain').textContent = fmtShort(r.investGain);
+  let gainSub = '';
+  if (r.shokiboGain !== 0) gainSub += '小規模(利率1.0%): ' + fmtShort(r.shokiboGain);
+  if (r.shokiboGain !== 0 && r.idecoGain !== 0) gainSub += ' / ';
+  if (r.idecoGain !== 0) gainSub += 'iDeCo(' + (r.idecoReturn * 100).toFixed(0) + '%): ' + fmtShort(r.idecoGain);
+  document.getElementById('tsInvestGainSub').textContent = gainSub;
+  document.getElementById('tsReceiveAmount').textContent = fmtShort(r.totalReceive);
+  document.getElementById('tsReceiveAmountSub').textContent = '掛金合計: ' + fmtShort(r.totalContrib);
+  document.getElementById('tsReceiveTax').textContent = fmtShort(r.additionalRetireTax);
+  document.getElementById('tsTotalContrib').textContent = fmtShort(r.totalContrib);
+
+  // 年間内訳
+  const annGrid = document.getElementById('tsAnnualBreakdown');
+  annGrid.innerHTML = '';
+  const addRow = (grid, label, value, isSub) => {
+    const div = document.createElement('div');
+    div.className = 'breakdown-item' + (isSub ? ' sub' : '');
+    div.innerHTML = `<span class="breakdown-label">${label}</span><span class="breakdown-value">${typeof value === 'string' ? value : fmt(value)}</span>`;
+    grid.appendChild(div);
+  };
+  addRow(annGrid, '年間掛金合計', r.totalAnnualContrib);
+  if (r.shokiboAnnual > 0) addRow(annGrid, '（小規模企業共済）', r.shokiboAnnual, true);
+  if (r.idecoAnnual > 0) addRow(annGrid, '（iDeCo）', r.idecoAnnual, true);
+  addRow(annGrid, '課税所得（掛金控除前）', r.taxableWithout);
+  addRow(annGrid, '所得税の限界税率', (r.marginalRateOriginal * 100).toFixed(0) + '%');
+  addRow(annGrid, '所得税の節税（年）', r.incomeTaxSaving);
+  addRow(annGrid, '復興特別所得税の節税（年）', r.reconSaving);
+  addRow(annGrid, '住民税の節税（年）', r.residentTaxSaving);
+  addRow(annGrid, '年間節税額合計', r.annualSaving);
+
+  // 受取内訳
+  const retGrid = document.getElementById('tsRetireBreakdown');
+  retGrid.innerHTML = '';
+  addRow(retGrid, '受取見込み額', r.totalReceive);
+  if (r.shokiboReceive > 0) {
+    addRow(retGrid, '小規模企業共済（利率1.0%）', r.shokiboReceive, true);
+    addRow(retGrid, '（掛金' + fmt(r.shokiboContrib) + ' → 運用益' + fmt(r.shokiboGain) + '）', '', true);
+  }
+  if (r.idecoReceive > 0) {
+    addRow(retGrid, 'iDeCo（利回り' + (r.idecoReturn * 100).toFixed(0) + '%）', r.idecoReceive, true);
+    addRow(retGrid, '（掛金' + fmt(r.idecoContrib) + ' → 運用益' + fmt(r.idecoGain) + '）', '', true);
+  }
+  addRow(retGrid, '退職所得控除', r.retirementDeduction);
+  addRow(retGrid, '退職所得（課税対象）', r.retireTax.retirementIncome);
+  addRow(retGrid, '所得税', r.retireTax.incomeTax);
+  addRow(retGrid, '復興特別所得税', r.retireTax.reconstructionTax);
+  addRow(retGrid, '住民税', r.retireTax.residentTax);
+  addRow(retGrid, '受取時の税金合計', r.additionalRetireTax);
+
+  // 実質メリット内訳
+  const benGrid = document.getElementById('tsBenefitBreakdown');
+  benGrid.innerHTML = '';
+  addRow(benGrid, '❶ 累計節税額（' + years + '年間）', r.cumulativeSaving);
+  addRow(benGrid, '（年間節税額 × ' + years + '年）', r.annualSaving + ' × ' + years, true);
+  addRow(benGrid, '❷ 受取時の税金', '-' + fmt(r.additionalRetireTax));
+  addRow(benGrid, '★ 純粋な節税額（❶−❷）', r.netTaxSaving);
+  addRow(benGrid, '❸ 掛金合計', r.totalContrib);
+  addRow(benGrid, '❹ 受取見込み額', r.totalReceive);
+  addRow(benGrid, '★ 運用益合計（❹−❸）', r.investGain);
+  if (r.shokiboGain !== 0) addRow(benGrid, '（小規模企業共済 利率1.0%）', r.shokiboGain, true);
+  if (r.idecoGain !== 0) addRow(benGrid, '（iDeCo 利回り' + (r.idecoReturn * 100).toFixed(0) + '%）', r.idecoGain, true);
+  addRow(benGrid, '━━━━━━━━━━', '━━━━━━');
+  addRow(benGrid, '実質メリット合計（節税+運用益）', r.totalBenefit);
+
+  // 年数別テーブル
+  const milestones = [10, 15, 20, 25, 30];
+  const results = milestones.map(y => calcTaxSavingForYears(params, y));
+  const thead = document.querySelector('#tsYearTable thead');
+  thead.innerHTML = '<tr><th></th>' + milestones.map(y => `<th>${y}年</th>`).join('') + '</tr>';
+  const tbody = document.querySelector('#tsYearTable tbody');
+  const rows = [
+    ['掛金合計', r => fmt(r.totalContrib)],
+    ['累計節税額', r => fmt(r.cumulativeSaving)],
+    ['受取見込み額', r => fmt(r.totalReceive)],
+    ['退職所得控除', r => fmt(r.retirementDeduction)],
+    ['受取時の税金', r => fmt(r.additionalRetireTax)],
+    ['実質メリット', r => fmt(r.totalBenefit)],
+  ];
+  tbody.innerHTML = rows.map((row, ri) => {
+    const cls = ri === rows.length - 1 ? ' class="benefit-row"' : (ri === 0 ? '' : '');
+    return `<tr${cls}><td>${row[0]}</td>${results.map((res, ci) => {
+      const highlight = milestones[ci] === years ? ' style="background:#fef3c7"' : '';
+      return `<td${highlight}>${row[1](res)}</td>`;
+    }).join('')}</tr>`;
+  }).join('');
+
+  // グラフ
+  const chartLabels = milestones.map(y => y + '年');
+  const savingData = results.map(r => r.cumulativeSaving);
+  const taxData = results.map(r => r.additionalRetireTax);
+  const benefitData = results.map(r => r.totalBenefit);
+
+  const chartData = {
+    labels: chartLabels,
+    datasets: [
+      {
+        label: '累計節税額',
+        data: savingData,
+        backgroundColor: 'rgba(217, 119, 6, 0.7)',
+      },
+      {
+        label: '受取時の税金',
+        data: taxData,
+        backgroundColor: 'rgba(220, 38, 38, 0.5)',
+      },
+      {
+        label: '実質メリット',
+        data: benefitData,
+        backgroundColor: 'rgba(5, 150, 105, 0.7)',
+      }
+    ]
+  };
+
+  if (taxSaveChart) {
+    taxSaveChart.data = chartData;
+    taxSaveChart.update();
+  } else {
+    taxSaveChart = new Chart(document.getElementById('taxSaveChart'), {
+      type: 'bar',
+      data: chartData,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: { font: { size: 12, weight: 'bold' }, padding: 12 }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) { return ctx.dataset.label + ': ' + fmtShort(ctx.raw); }
+            }
+          }
+        },
+        scales: {
+          x: { ticks: { font: { size: 12, weight: '600' } } },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(v) { return fmtShort(v); },
+              font: { size: 11 }
+            }
+          }
+        }
+      },
+      plugins: [{
+        id: 'tsBarLabels',
+        afterDatasetsDraw(chart) {
+          const ctx = chart.ctx;
+          // 実質メリット（3番目のデータセット）の値のみ表示
+          const meta = chart.getDatasetMeta(2);
+          meta.data.forEach((bar, idx) => {
+            const val = chart.data.datasets[2].data[idx];
+            if (val === 0) return;
+            ctx.save();
+            ctx.fillStyle = '#059669';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(fmtShort(val), bar.x, bar.y - 6);
+            ctx.restore();
+          });
+        }
+      }]
+    });
+  }
+}
+
+function saveTaxSavePDF() {
+  document.body.classList.add('print-taxsave');
+  window.print();
+  document.body.classList.remove('print-taxsave');
+}
+
+// イベントリスナー
+document.querySelectorAll('#tab-taxsave input, #tab-taxsave select').forEach(el => {
+  el.addEventListener('input', updateTaxSave);
+  el.addEventListener('change', updateTaxSave);
+});
+
+// タブ切替時に初回計算
+const origTabHandler = document.querySelectorAll('.tab-btn');
+origTabHandler.forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (btn.dataset.tab === 'taxsave') setTimeout(() => { syncIncomeFromMain(); }, 50);
+  });
+});
+
 // Initial calculation
 updateMain();
 updateCompare();
+// 節税タブの所得をメインタブから初期セット
+syncIncomeFromMain();
 </script>
 
 </body>
